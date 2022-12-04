@@ -14,16 +14,8 @@ const maxSum = input.split("\r\n")
             ...previousElves
         ]
     }, [0])
-    // find top 3 values
-    .reduce((previousValue, currentValue) => {
-        const [minValue, ...otherValues] = previousValue;
-
-        if (currentValue > minValue) {
-            return [currentValue, ...otherValues].sort( (a, b) => a -b);
-        }
-        return  previousValue;
-    }, [0,0,0])
-    // find their sum
+    .sort((a, b) => a - b )
+    .slice(-3)
     .reduce((previousValue, currentValue) => previousValue + currentValue);
 
 console.log(maxSum)
