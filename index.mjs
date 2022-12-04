@@ -9,10 +9,13 @@ const sumElfCalories = elf =>
         .map(Number)
         .reduce(sum)
 
-const maxSum = input.split("\r\n\r\n")
+const sortedCaloriesByElf = input.split("\r\n\r\n")
     .map(sumElfCalories)
-    .sort(ascendingSortCompare )
-    .slice(-3)
-    .reduce(sum);
+    .sort(ascendingSortCompare );
 
-console.log(maxSum)
+const day1part1 = sortedCaloriesByElf
+    .pop()
+
+const day1part2 = sortedCaloriesByElf
+    .slice(-3)
+    .reduce(sum)
