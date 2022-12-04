@@ -4,14 +4,26 @@ const input = await readFile('sample_input.txt', 'utf-8');
 
 const maxSum = input.split("\r\n")
     .map(Number)
+    // sum of calories for each elf
+    .reduce((accumulator, currentValue) => {
+        let [currentElf, ...previousElves] = accumulator;
+        currentElf +=currentValue;
+        return [
+            ...(currentValue ? [] : [0]),
+            currentElf,
+            ...previousElves
+        ]
+    }, [0])
+    // find top 3 values
     .reduce((previousValue, currentValue) => {
-        let {currentSum, maxSum} = previousValue;
-        currentSum += currentValue;
-        maxSum = Math.max(maxSum, currentSum);
-        if (!currentValue) {
-            currentSum = 0;
+        const [minValue, ...otherValues] = previousValue;
+
+        if (currentValue > minValue) {
+            return [currentValue, ...otherValues].sort( (a, b) => a -b);
         }
-        return {currentSum, maxSum};
-    }, {maxSum: 0, currentSum: 0}).maxSum;
+        return  previousValue;
+    }, [0,0,0])
+    // find their sum
+    .reduce((previousValue, currentValue) => previousValue + currentValue);
 
 console.log(maxSum)
