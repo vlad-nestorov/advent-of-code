@@ -1,6 +1,6 @@
 import {readFile} from 'node:fs/promises';
 
-const input = await readFile('sample_input.txt', 'utf-8');
+const input = await readFile('day1_sample_input.txt', 'utf-8');
 
 const sum = (a, b) => a + b;
 const ascendingSortCompare = (a, b) => a - b;
