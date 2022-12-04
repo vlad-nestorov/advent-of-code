@@ -2,20 +2,17 @@ import {readFile} from 'node:fs/promises';
 
 const input = await readFile('sample_input.txt', 'utf-8');
 
-const maxSum = input.split("\r\n")
-    .map(Number)
-    // sum of calories for each elf
-    .reduce((accumulator, currentValue) => {
-        let [currentElf, ...previousElves] = accumulator;
-        currentElf +=currentValue;
-        return [
-            ...(currentValue ? [] : [0]),
-            currentElf,
-            ...previousElves
-        ]
-    }, [0])
-    .sort((a, b) => a - b )
+const sum = (a, b) => a + b;
+const ascendingSortCompare = (a, b) => a - b;
+const sumElfCalories = elf =>
+    elf.split("\r\n")
+        .map(Number)
+        .reduce(sum)
+
+const maxSum = input.split("\r\n\r\n")
+    .map(sumElfCalories)
+    .sort(ascendingSortCompare )
     .slice(-3)
-    .reduce((previousValue, currentValue) => previousValue + currentValue);
+    .reduce(sum);
 
 console.log(maxSum)
