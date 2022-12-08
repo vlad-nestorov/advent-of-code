@@ -36,4 +36,20 @@ export const part1 = (input: string) => {
     return stacks.map(s => s.pop()).join('');
 
 };
-    
+
+export const part2 = (input: string) => {
+    const [stackLines, instructionLines] = input.split("\r\n\r\n");
+    const stacks = parseStacks(
+        stackLines.split("\r\n").slice(0, -1)
+    );
+
+    instructionLines.split("\r\n")
+        .map(parseInstructionLine)
+        .forEach(([count, from, to]) => {
+            stacks[to - 1].push(...stacks[from - 1].splice(-count));
+        })
+
+    return stacks.map(s => s.pop()).join('');
+
+};
+
