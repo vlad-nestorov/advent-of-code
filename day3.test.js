@@ -1,4 +1,4 @@
-const {part1, findRogueItem} = require("./day3");
+const {part1, part2, intersect} = require("./day3");
 const {readFileSync} = require('node:fs');
 
 
@@ -13,12 +13,15 @@ describe('Day 3', function () {
         ['CrZsJsPPZsGzwwsLwLmpwMDw', 's']
     ]
 
-    const exampleInput = exmapleCases.reduce((prev, [s,..._]) => [...prev, s], [])
+    const exampleInput = exmapleCases.reduce((prev, [s, ..._]) => [...prev, s], [])
         .join("\r\n")
 
 
-    it.each(exmapleCases)('findRogueItem ', (input, expected) => {
-        expect(findRogueItem(input)).toEqual(expected);
+    it.each(exmapleCases)('intersect', (input, expected) => {
+        expect(intersect(
+                new Set(input.substr(0, input.length / 2)),
+                new Set(input.substr(input.length / 2))
+            )).toEqual(new Set([expected]));
     });
 
     it('part1 example', () => {
@@ -28,6 +31,11 @@ describe('Day 3', function () {
     it('part1 result', () => {
         const input = readFileSync('day3_sample_input.txt', 'utf8');
         expect(part1(input)).toEqual(7821);
+    })
+
+    it('part2 result', () => {
+        const input = readFileSync('day3_sample_input.txt', 'utf8');
+        expect(part2(input)).toEqual(2752);
     })
 
 });
