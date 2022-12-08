@@ -2,7 +2,7 @@
   "name": "advent-of-code",
   "version": "1.0.0",
   "description": "",
-  "main": "src/day1.mjs",
+  "main": "src/day1/day1.mjs",
   "scripts": {
     "test": "jest"
   },
