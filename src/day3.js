@@ -1,4 +1,4 @@
-const {sum} = require("./utils");
+const {sum} = require("../utils");
 
 const intersect = (...sets) => {
     const [set1, ...otherSets] = sets;

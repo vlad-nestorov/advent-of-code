@@ -1,4 +1,4 @@
-const {sum} = require("./utils");
+const {sum} = require("../utils");
 
 const rpsResult = ([a, x]) => 1 - ((4 + a - x) % 3);
 const rpsChoice = ([a, x]) => (a + 2 + x) % 3;

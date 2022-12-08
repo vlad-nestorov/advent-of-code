@@ -1,0 +1,1 @@
+export const splitPairs = (input: string) => input.split(/[-,]/)

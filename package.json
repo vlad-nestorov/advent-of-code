@@ -2,7 +2,7 @@
   "name": "advent-of-code",
   "version": "1.0.0",
   "description": "",
-  "main": "day1.mjs",
+  "main": "src/day1.mjs",
   "scripts": {
     "test": "jest"
   },
@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^29.3.1"
+    "@types/jest": "^29.2.4",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3",
+    "typescript": "^4.9.4"
   }
 }
