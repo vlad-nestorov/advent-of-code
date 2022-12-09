@@ -10,6 +10,6 @@ describe('Day 6', function () {
 
     it('part 2 answer is correct', () => {
         const input = readFileSync('src/day6/sample_input.txt', 'utf-8');
-        expect(part2(input)).toEqual(0);
+        expect(part2(input)).toEqual(2508);
     });
 });

@@ -19,8 +19,8 @@ describe('Day 3', function () {
 
     it.each(exmapleCases)('intersect', (input, expected) => {
         expect(intersect(
-                new Set(input.substr(0, input.length / 2)),
-                new Set(input.substr(input.length / 2))
+                new Set(input.slice(0, input.length / 2)),
+                new Set(input.slice(input.length / 2))
             )).toEqual(new Set([expected]));
     });
 

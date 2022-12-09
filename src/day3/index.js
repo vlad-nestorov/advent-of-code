@@ -22,6 +22,7 @@ const groupingReducer = (groupSize) => (accumulator, currentValue, index) => {
     return accumulator;
 }
 
+const firstItemOfSet = (set) => set.values().next().value;
 
 const findPriority = (item) => parseInt(item, 36) - 9 + (item === item.toLowerCase() ? 0 : 26);
 
@@ -30,18 +31,16 @@ const part1 = (input) => input.split("\r\n")
         new Set(elf.substr(0, elf.length / 2)),
         new Set(elf.substr(elf.length / 2))
     ])
-    .map(group => intersect(group))
+    .map(group => intersect(...group))
+    .map(firstItemOfSet)
     .map(findPriority)
     .reduce(sum)
 
 const part2 = (input = '') => input.split("\r\n")
     .map(value => new Set(value))
     .reduce(groupingReducer(3), [])
-    .map(group => intersect(group))
-    .flatMap(set => {
-        const [item] = set;
-        return item;
-    })
+    .map(group => intersect(...group))
+    .map(firstItemOfSet)
     .map(findPriority)
     .reduce(sum)
 
