@@ -11,6 +11,10 @@ export type File = {
     name: string;
 }
 
+const getNodes = (tree: Node<File>): Node<File>[] => {
+    return [tree, ...(tree.children ?? []).flatMap(getNodes)];
+}
+
 const fixParents = (tree: Node<File>) => {
     tree.children?.forEach(child => {
         child.parent = tree;
@@ -96,7 +100,20 @@ export const parseInput = (input: string) => {
     return tree;
 }
 
-export const part1 = (input: string) => parseInput(input)
+export const part1 = (input: string) => getNodes(parseInput(input)['root'])
+    .filter(file => file.type === 'd' && file.size < 100000)
+    .map(file => file.size)
+    .reduce(sum, 0);
 
 export const part2 = (input: string) => {
+    let folders = parseInput(input)['root'];
+    const TOTAL_SPACE = 70000000;
+    const NEEDED_SPACE = 30000000;
+    const spaceToDelete = NEEDED_SPACE - (TOTAL_SPACE - folders.size);
+
+    return getNodes(folders)
+        .filter(file => file.type === 'd')
+        .map(file => file.size)
+        .filter(size => size >= spaceToDelete)
+        .sort((a, b) => a - b)[0]
 };
