@@ -45,6 +45,8 @@ export const moveTail = (head: Position, tail: Position): Position => {
    ])
 }
 
+export const startingState = (): State => ({ head: [0,0], tail: [0,0], visited: new Set(["0,0"])});
+
 export const moveHead = (state: State, direction: Direction) => {
     state.head = add(state.head, direction);
     state.tail = moveTail(state.head, state.tail)
@@ -53,8 +55,7 @@ export const moveHead = (state: State, direction: Direction) => {
 }
 
 export const part1 = (input: string) => parseInput(input)
-    .reduce<State>(
-        moveHead,
-        { head: [0,0], tail: [0,0], visited: new Set([[0,0].toString()])});
+    .reduce(moveHead, startingState())
+    .visited.size;
 
 export const part2 = (input: string) => input;

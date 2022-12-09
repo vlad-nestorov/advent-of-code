@@ -1,11 +1,8 @@
 import {readFileSync} from 'node:fs'
-import {Direction, moveHead, moveTail, part1, part2, Position, State} from "./index";
+import {Direction, moveHead, moveTail, part1, part2, Position, startingState, State} from "./index";
 
 describe('Day 9', function () {
     const sampleInput = readFileSync('src/day9/sample_input.txt', 'utf-8');
-
-    const origin: Position = [0,0]
-    const originString = "0,0";
 
     describe('moveTail', function () {
         it.each<[Position, Position, Position]>([
@@ -19,22 +16,16 @@ describe('Day 9', function () {
         });
     });
     describe('moveHead', function () {
-        const defaultState = (): State => ({
-            head: origin,
-            tail: origin,
-            visited: new Set([originString])
-        });
-
         let initialState: State;
 
         beforeEach(() => {
-            initialState = defaultState();
+            initialState = startingState();
         });
 
         it.each<[Direction, State]>([
-            [[0, 0], defaultState()],
-            [[1, 0], {...defaultState(), head:[1, 0]}],
-            [[2, 0], {head:[2, 0], tail:[1,0], visited: new Set([originString, "1,0"])}],
+            [[0, 0], startingState()],
+            [[1, 0], {...startingState(), head:[1, 0]}],
+            [[2, 0], {head:[2, 0], tail:[1,0], visited: new Set(["0,0", "1,0"])}],
         ])('in %p direction should set state correctly', (direction, expected) => {
             expect(moveHead(initialState, direction)).toEqual(expected)
         });
@@ -42,6 +33,7 @@ describe('Day 9', function () {
     });
 
     it('part 1 answer is correct', () => {
+        // 1510 too low
         expect(part1(sampleInput)).toEqual('');
     });
 
