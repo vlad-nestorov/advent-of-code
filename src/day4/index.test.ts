@@ -1,4 +1,4 @@
-import {containsRange, intersectsRange, part1, part2, prepInput, Range} from "./day4";
+import {containsRange, intersectsRange, part1, part2, prepInput, Range} from "./index";
 import { readFileSync } from 'node:fs'
 
 describe('Day 4', function () {
@@ -32,12 +32,12 @@ describe('Day 4', function () {
 
 
     it('part 1 answer is correct', () => {
-        const input = readFileSync('src/day4_sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day4/sample_input.txt', 'utf-8');
         expect(part1(input)).toEqual(453);
     });
 
     it('part 2 answer is correct', () => {
-        const input = readFileSync('src/day4_sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day4/sample_input.txt', 'utf-8');
         expect(part2(input)).toEqual(919);
     })
 });

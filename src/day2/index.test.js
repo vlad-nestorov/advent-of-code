@@ -1,4 +1,4 @@
-const {part1, part2, part2Score, rpsChoice, rpsResult} = require("./day2");
+const {part1, part2, part2Score, rpsChoice, rpsResult} = require("./index");
 const { readFileSync } = require('node:fs');
 
 
@@ -35,7 +35,7 @@ describe('Day 2', function () {
     })
 
     it('part 1 returns correct result', () => {
-        const input = readFileSync('day2_sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day2/sample_input.txt', 'utf-8');
         expect(part1(input)).toEqual(14069)
     })
 
@@ -49,7 +49,7 @@ describe('Day 2', function () {
     })
 
     it('part 2 returns correct result', () => {
-        const input = readFileSync('day2_sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day2/sample_input.txt', 'utf-8');
         expect(part2(input)).toEqual(12411)
     })
 

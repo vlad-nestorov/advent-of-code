@@ -1,4 +1,4 @@
-const {part1, part2, intersect} = require("./day3");
+const {part1, part2, intersect} = require("./index");
 const {readFileSync} = require('node:fs');
 
 
@@ -29,12 +29,12 @@ describe('Day 3', function () {
     })
 
     it('part1 result', () => {
-        const input = readFileSync('day3_sample_input.txt', 'utf8');
+        const input = readFileSync('src/day3/sample_input.txt', 'utf8');
         expect(part1(input)).toEqual(7821);
     })
 
     it('part2 result', () => {
-        const input = readFileSync('day3_sample_input.txt', 'utf8');
+        const input = readFileSync('src/day3/sample_input.txt', 'utf8');
         expect(part2(input)).toEqual(2752);
     })
 

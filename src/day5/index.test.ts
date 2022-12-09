@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs'
-import {parseInstructionLine, parseStackLine, parseStacks, part1, part2} from "./day5";
+import {parseInstructionLine, parseStackLine, parseStacks, part1, part2} from "./index";
 
 describe('Day 5', function () {
 
@@ -9,7 +9,7 @@ describe('Day 5', function () {
     });
 
     it('should parse stack successfully', () => {
-        const stackInput = readFileSync('src/day5_sample_input.txt', 'utf-8')
+        const stackInput = readFileSync('src/day5/sample_input.txt', 'utf-8')
             .split("\r\n")
             .slice(0, 8);
 
@@ -30,12 +30,12 @@ describe('Day 5', function () {
     });
 
     it('part 1 answer is correct', () => {
-        const input = readFileSync('src/day5_sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day5/sample_input.txt', 'utf-8');
         expect(part1(input)).toEqual('FZCMJCRHZ');
     });
 
     it('part 2 answer is correct', () => {
-        const input = readFileSync('src/day5_sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day5/sample_input.txt', 'utf-8');
         expect(part2(input)).toEqual('JSDHQMZGF');
     });
 });
