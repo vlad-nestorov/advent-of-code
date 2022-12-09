@@ -1,6 +1,5 @@
-const {part1, part2, intersect} = require("./index");
-const {readFileSync} = require('node:fs');
-
+import {intersect, part1, part2} from "./index";
+import {readFileSync} from "node:fs";
 
 describe('Day 3', function () {
 

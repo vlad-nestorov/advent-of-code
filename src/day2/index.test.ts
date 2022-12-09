@@ -1,6 +1,5 @@
-const {part1, part2, part2Score, rpsChoice, rpsResult} = require("./index");
-const { readFileSync } = require('node:fs');
-
+import {part1, part2, part2Score, rpsChoice, rpsResult} from "./index";
+import {readFileSync} from "node:fs";
 
 describe('Day 2', function () {
 
@@ -40,9 +39,9 @@ describe('Day 2', function () {
     })
 
     it.each([
-        [0,1,4],
-        [1,0,1],
-        [2,2,7]
+        [0, 1, 4],
+        [1, 0, 1],
+        [2, 2, 7]
     ])
     ('part2Score([%i, %i]) returns %i', (a, x, expected) => {
         expect(part2Score([a, x])).toEqual(expected)

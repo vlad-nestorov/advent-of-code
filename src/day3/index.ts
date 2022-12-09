@@ -1,9 +1,9 @@
-const {sum} = require("../utils");
+import {sum} from "../utils";
 
-const intersect = (...sets) => {
+export const intersect = <T>(...sets: Set<T>[]): Set<T> => {
     const [set1, ...otherSets] = sets;
 
-    let result = new Set();
+    let result = new Set<T>();
 
     for (const x of set1) {
         if (otherSets.every(s => s.has(x))) {
@@ -13,7 +13,7 @@ const intersect = (...sets) => {
     return result;
 }
 
-const groupingReducer = (groupSize) => (accumulator, currentValue, index) => {
+const groupingReducer = <T>(groupSize: number) => (accumulator: T[][], currentValue: T, index: number) => {
     if (index % groupSize) {
         accumulator[accumulator.length - 1].push(currentValue)
     } else {
@@ -22,26 +22,24 @@ const groupingReducer = (groupSize) => (accumulator, currentValue, index) => {
     return accumulator;
 }
 
-const firstItemOfSet = (set) => set.values().next().value;
+const firstItemOfSet = <T>(set: Set<T>) => set.values().next().value;
 
-const findPriority = (item) => parseInt(item, 36) - 9 + (item === item.toLowerCase() ? 0 : 26);
+const findPriority = (item: string) => parseInt(item, 36) - 9 + (item === item.toLowerCase() ? 0 : 26);
 
-const part1 = (input) => input.split("\r\n")
+export const part1 = (input: string) => input.split("\r\n")
     .map(elf => [
-        new Set(elf.substr(0, elf.length / 2)),
-        new Set(elf.substr(elf.length / 2))
+        new Set(elf.slice(0, elf.length / 2)),
+        new Set(elf.slice(elf.length / 2))
     ])
     .map(group => intersect(...group))
     .map(firstItemOfSet)
     .map(findPriority)
     .reduce(sum)
 
-const part2 = (input = '') => input.split("\r\n")
+export const part2 = (input: string) => input.split("\r\n")
     .map(value => new Set(value))
     .reduce(groupingReducer(3), [])
     .map(group => intersect(...group))
     .map(firstItemOfSet)
     .map(findPriority)
     .reduce(sum)
-
-module.exports = {part1, part2, intersect};
