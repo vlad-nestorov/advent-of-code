@@ -16,19 +16,34 @@ describe('Day 9', function () {
         });
     });
     describe('moveHead', function () {
-        let initialState: State;
-
-        beforeEach(() => {
-            initialState = startingState();
-        });
 
         it.each<[Direction, State]>([
-            [[0, 0], startingState()],
-            [[1, 0], {...startingState(), head:[1, 0]}],
-            [[2, 0], {head:[2, 0], tail:[1,0], visited: new Set(["0,0", "1,0"])}],
-        ])('in %p direction should set state correctly', (direction, expected) => {
-            expect(moveHead(initialState, direction)).toEqual(expected)
+            [[0, 0], startingState(1)],
+            [[1, 0], {...startingState(1), head:[1, 0]}],
+            [[2, 0], {head:[2, 0], tail:[[1,0]], visited: new Set(["0,0", "1,0"])}],
+        ])('with 1 tail in %p direction should set state correctly', (direction, expected) => {
+            expect(moveHead(startingState(1), direction)).toEqual(expected)
         });
+
+        it.each<[Direction[], State]>([
+            [[[0, 0]], startingState(3)],
+            [[[1, 0]], {...startingState(3), head:[1, 0]}],
+            [[[4, 0], [0,4]], {
+                head:[4, 4],
+                tail:[[4,3],[4,2],[3,2]],
+                visited: new Set([
+                    "0,0",
+                    "1,0", "2,0", "3,0",
+                    "4,1", "4,2", "4,3",
+                    "3,1", "2,1", "3,2"
+                ])
+            }],
+        ])('with 3 tails in %p direction should set state correctly', (directions, expected) => {
+            expect(
+                directions.reduce(moveHead, startingState(3))
+            ).toEqual(expected)
+        });
+
 
     });
 
@@ -37,6 +52,7 @@ describe('Day 9', function () {
     });
 
     it('part 2 answer is correct', () => {
+        // too high 13615
         expect(part2(sampleInput)).toEqual('');
     });
 });

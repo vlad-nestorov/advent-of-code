@@ -18,7 +18,7 @@ export const parseInput = (input: string): Direction[] => {
 export type Position = [number, number];
 export type Direction = Position;
 
-export type State = { head: Position, tail: Position, visited: Set<string> }
+export type State = { head: Position, tail: Position[], visited: Set<string> }
 
 // assumes same size arrays
 const add = <T extends number[]>(array1: T, array2: T): T =>
@@ -47,23 +47,32 @@ export const moveTail = (head: Position, tail: Position): Position => {
    ])
 }
 
-export const startingState = (): State => ({ head: [0,0], tail: [0,0], visited: new Set(["0,0"])});
+export const startingState = (tails: number): State => ({
+    head: [0,0],
+    tail: Array.from({length:tails}, () => [0,0]),
+    visited: new Set(["0,0"])
+});
 
 export const moveHead = (state: State, moveInstruction: Direction) => {
 
     let direction = moveInstruction.map(Math.sign) as Direction;
     let magnitude = moveInstruction.map(Math.abs).reduce(sum);
 
-    for (let i = 0; i < magnitude; i++) {
+    for (let step = 0; step < magnitude; step++) {
         state.head = add(state.head, direction);
-        state.tail = moveTail(state.head, state.tail)
-        state.visited.add(state.tail.toString())
+        for (let tail = 0; tail < state.tail.length; tail++) {
+            const head = tail === 0 ? state.head : state.tail[tail - 1];
+            state.tail[tail] = moveTail(head , state.tail[tail])
+            state.visited.add(state.tail[tail].toString())
+        }
     }
     return state;
 }
 
 export const part1 = (input: string) => parseInput(input)
-    .reduce(moveHead, startingState())
+    .reduce(moveHead, startingState(1))
     .visited.size;
 
-export const part2 = (input: string) => input;
+export const part2 = (input: string) => parseInput(input)
+    .reduce(moveHead, startingState(9))
+    .visited.size;
