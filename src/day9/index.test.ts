@@ -33,8 +33,7 @@ describe('Day 9', function () {
     });
 
     it('part 1 answer is correct', () => {
-        // 1510 too low
-        expect(part1(sampleInput)).toEqual('');
+        expect(part1(sampleInput)).toEqual(6486);
     });
 
     it('part 2 answer is correct', () => {

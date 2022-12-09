@@ -1,3 +1,5 @@
+import {sum} from "../utils";
+
 export const parseInput = (input: string): Direction[] => {
     return input.split("\r\n")
         .map(line => line.split(" "))
@@ -47,10 +49,16 @@ export const moveTail = (head: Position, tail: Position): Position => {
 
 export const startingState = (): State => ({ head: [0,0], tail: [0,0], visited: new Set(["0,0"])});
 
-export const moveHead = (state: State, direction: Direction) => {
-    state.head = add(state.head, direction);
-    state.tail = moveTail(state.head, state.tail)
-    state.visited.add(state.tail.toString())
+export const moveHead = (state: State, moveInstruction: Direction) => {
+
+    let direction = moveInstruction.map(Math.sign) as Direction;
+    let magnitude = moveInstruction.map(Math.abs).reduce(sum);
+
+    for (let i = 0; i < magnitude; i++) {
+        state.head = add(state.head, direction);
+        state.tail = moveTail(state.head, state.tail)
+        state.visited.add(state.tail.toString())
+    }
     return state;
 }
 
