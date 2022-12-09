@@ -26,7 +26,7 @@ describe('Day 7', function () {
         })
 
 
-        it('root is current on initialization',() => {
+        it('should initialize current as root',() => {
             expect(tree['current']).toBe(tree['root']);
             expect(tree['current']?.name).toEqual('root');
         });
@@ -42,16 +42,22 @@ describe('Day 7', function () {
             expect(tree['current']?.name).toEqual(expected);
         });
 
+        it('should add a new file to the tree ', () => {
+            const previousLength = tree['current'].children!.length;
+            tree.add({name:'Vlad', type: 'f', size: 42});
+            expect(tree['current'].children?.length).toEqual(previousLength + 1);
+        })
+
     })
 
 
     it('part 1 answer is correct', () => {
-        const input = readFileSync('src/day#/sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day7/sample_input.txt', 'utf-8');
         expect(part1(input)).toEqual('');
     });
 
     it('part 2 answer is correct', () => {
-        const input = readFileSync('src/day#/sample_input.txt', 'utf-8');
+        const input = readFileSync('src/day7/sample_input.txt', 'utf-8');
         expect(part2(input)).toEqual('');
     });
 });

@@ -1,3 +1,5 @@
+import {sum} from "../utils";
+
 export type Node<T> = {
     parent?: Node<T>;
     children?: Node<T>[];
@@ -16,23 +18,25 @@ const fixParents = (tree: Node<File>) => {
     })
 }
 
-export class Tree {
-    private readonly root: Node<File> = {
-        children: [],
-        name: '/',
-        type: 'd',
-        size: 0
+const fixSize = (tree: Node<File>) => {
+    if (!tree.size) {
+        tree.size = (tree.children ?? [])
+            .map(child => fixSize(child))
+            .reduce(sum, 0)
     }
-    private current = this.root;
+    return tree.size;
+}
 
+export class Tree {
+    private readonly root: Node<File>;
+    private current;
 
-
-    constructor(tree: Node<File>) {
+    constructor(tree: Node<File> = {name: '/', size: 0, type: 'd'}) {
         this.root = this.current = tree;
         fixParents(tree);
     }
 
-    cd(path:string) {
+    cd(path: string) {
         if (path === '/') {
             this.current = this.root;
         } else if (path === '..') {
@@ -45,11 +49,54 @@ export class Tree {
             throw 'invalid navigation';
         }
     }
+
+    add(file: File) {
+        this.current.children = [
+            ...this.current.children ?? [],
+            {
+                ...file,
+                parent: this.current
+            }
+        ];
+    }
 }
 
-export const part1 = (input: string) => {
+const parseFile = (line: string): File => {
+    let [size, name] = line.split(" ");
+    if (size === 'dir') {
+        return {
+            type: 'd',
+            name,
+            size: 0
+        }
+    } else {
+        return {
+            type: 'f',
+            name,
+            size: Number(size)
+        }
+    }
+}
 
-};
+export const parseInput = (input: string) => {
+    const tree = new Tree();
+
+    input.split("\r\n")
+        .filter(line => line !== '$ ls')
+        .forEach(line => {
+            let [_, path] = line.split('$ cd ');
+            if (path) {
+                tree.cd(path);
+            } else {
+                tree.add(parseFile(line));
+            }
+        })
+
+    fixSize(tree['root']);
+    return tree;
+}
+
+export const part1 = (input: string) => parseInput(input)
 
 export const part2 = (input: string) => {
 };
