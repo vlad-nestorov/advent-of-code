@@ -1,5 +1,6 @@
-import {intersect, part1, part2} from "./index";
+import {part1, part2} from "./index";
 import {readFileSync} from "node:fs";
+import {intersect} from "../utils";
 
 describe('Day 3', function () {
 
