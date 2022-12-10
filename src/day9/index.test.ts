@@ -31,12 +31,7 @@ describe('Day 9', function () {
             [[[4, 0], [0,4]], {
                 head:[4, 4],
                 tail:[[4,3],[4,2],[3,2]],
-                visited: new Set([
-                    "0,0",
-                    "1,0", "2,0", "3,0",
-                    "4,1", "4,2", "4,3",
-                    "3,1", "2,1", "3,2"
-                ])
+                visited: new Set(["0,0","1,0", "2,1", "3,2"])
             }],
         ])('with 3 tails in %p direction should set state correctly', (directions, expected) => {
             expect(
@@ -52,7 +47,6 @@ describe('Day 9', function () {
     });
 
     it('part 2 answer is correct', () => {
-        // too high 13615
-        expect(part2(sampleInput)).toEqual('');
+        expect(part2(sampleInput)).toEqual(2678);
     });
 });

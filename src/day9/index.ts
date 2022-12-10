@@ -63,8 +63,8 @@ export const moveHead = (state: State, moveInstruction: Direction) => {
         for (let tail = 0; tail < state.tail.length; tail++) {
             const head = tail === 0 ? state.head : state.tail[tail - 1];
             state.tail[tail] = moveTail(head , state.tail[tail])
-            state.visited.add(state.tail[tail].toString())
         }
+        state.visited.add(state.tail[state.tail.length - 1].toString())
     }
     return state;
 }
