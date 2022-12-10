@@ -25,3 +25,6 @@ export const groupingReducer = <T>(groupSize: number) => (accumulator: T[][], cu
 }
 
 export const firstItemOfSet = <T>(set: Set<T>) => set.values().next().value;
+
+export const intializeArray = <T>(length: number, generator: (index: number) => T) =>
+    Array.from({length}, (_,index) => generator(index));
