@@ -41,20 +41,21 @@ export const parseInput = (input: string): Monkey[] =>
             inspected: 0,
         }))
 
+export const playRound = (monkeys: Monkey[]) => monkeys.forEach((value, index, array) => {
+    value.inspected += value.items.length;
+    value.items
+        .map(value.operation)
+        .map(level => Math.floor(level  / 3))
+        .forEach(item => {
+            array[value.nextMonkey[item % value.test ? 0:1]].items.push(item)
+        });
+    value.items = [];
+})
 
 export const part1 = (input: string) => {
     const monkeys = parseInput(input);
     for (let i = 0; i < 20; i++) {
-        monkeys.forEach((value, index, array) => {
-            value.inspected += value.items.length;
-            value.items
-                .map(value.operation)
-                .map(level => level  / 3)
-                .forEach(item => {
-                    array[value.nextMonkey[item % value.test ? 1:0]].items.push(item)
-                });
-            value.items = [];
-        })
+        playRound(monkeys);
    }
     return monkeys.map(m => m.inspected).sort(ascendingSortCompare).slice(-2).reduce(multiply)
 

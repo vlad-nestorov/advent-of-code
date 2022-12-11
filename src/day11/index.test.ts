@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs'
-import {Monkey, parseInput, part1, part2} from "./index";
+import {parseInput, part1, part2, playRound} from "./index";
 
 describe('Day 11', function () {
     const sampleInput = readFileSync('src/day11/sample_input.txt', 'utf-8');
@@ -17,9 +17,19 @@ describe('Day 11', function () {
         expect(result[0].operation(12)).toEqual(12 * 19)
     })
 
-    it('part 1 answer is correct', () => {
-        // 12649 too low
-        expect(part1(exampleInput)).toEqual('');
+    it('playRound should return correctly', () => {
+        const monkeys = parseInput(exampleInput);
+        playRound(monkeys);
+        expect(monkeys.map(m => m.items)).toEqual([
+            [20, 23, 27, 26],
+            [2080, 25, 167, 207, 401, 1046],
+            [],
+            []
+        ])
+    })
+
+    it('part 1 answer is correct against example', () => {
+        expect(part1(exampleInput)).toEqual(10605);
     });
 
     it('part 1 answer is correct', () => {
