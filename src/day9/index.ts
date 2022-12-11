@@ -21,16 +21,16 @@ export type Direction = Position;
 export type State = { head: Position, tail: Position[], visited: Set<string> }
 
 // assumes same size arrays
-const add = <T extends number[]>(array1: T, array2: T): T =>
+const addArray = <T extends number[]>(array1: T, array2: T): T =>
     array1.map((value, index) => value + array2[index]) as T;
 
-const subtract = <T extends number[]>(array1: T, array2: T): T =>
+const subtractArray = <T extends number[]>(array1: T, array2: T): T =>
     array1.map((value, index) => value - array2[index]) as T;
 
 
 
 export const moveTail = (head: Position, tail: Position): Position => {
-    const difference = subtract(head, tail);
+    const difference = subtractArray(head, tail);
     const magnitude = difference.map(Math.abs);
     const [x,y] = magnitude;
     const [xDirection, yDirection] = difference.map(Math.sign);
@@ -41,7 +41,7 @@ export const moveTail = (head: Position, tail: Position): Position => {
         return tail;
     }
 
-   return subtract(head, [
+   return subtractArray(head, [
        x < y ? 0 : xDirection,
        y < x ? 0 : yDirection
    ])
@@ -59,7 +59,7 @@ export const moveHead = (state: State, moveInstruction: Direction) => {
     let magnitude = moveInstruction.map(Math.abs).reduce(add);
 
     for (let step = 0; step < magnitude; step++) {
-        state.head = add(state.head, direction);
+        state.head = addArray(state.head, direction);
         for (let tail = 0; tail < state.tail.length; tail++) {
             const head = tail === 0 ? state.head : state.tail[tail - 1];
             state.tail[tail] = moveTail(head , state.tail[tail])
