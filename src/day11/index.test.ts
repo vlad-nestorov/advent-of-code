@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs'
-import {parseInput, part1, part2, part2TheSmartWay, playRound} from "./index";
+import { parseInput, part1, part2, playRoundPart1} from "./index";
 
 describe('Day 11', function () {
     const sampleInput = readFileSync('src/day11/sample_input.txt', 'utf-8');
@@ -10,19 +10,19 @@ describe('Day 11', function () {
         expect(result.length).toEqual(4);
         expect(result[0]).toMatchObject({
             inspected: 0,
-            items: [79n,98n],
-            test: 23n,
+            items: [79,98],
+            test: 23,
             nextMonkey: [3, 2]
         })
-        expect(result[0].operation(12n)).toEqual(12n * 19n)
+        expect(result[0].operation(12)).toEqual(12 * 19)
     })
 
-    it('playRound should return correctly', () => {
+    it('playRound should return correctly for part1', () => {
         const monkeys = parseInput(exampleInput);
-        playRound(monkeys);
+        playRoundPart1(monkeys);
         expect(monkeys.map(m => m.items)).toEqual([
-            [20n, 23n, 27n, 26n],
-            [2080n, 25n, 167n, 207n, 401n, 1046n],
+            [20, 23, 27, 26],
+            [2080, 25, 167, 207, 401, 1046],
             [],
             []
         ])
@@ -37,10 +37,10 @@ describe('Day 11', function () {
     });
 
     it('part 2 answer is correct against example', () => {
-        expect(part2TheSmartWay(exampleInput)).toEqual(2713310158);
+        expect(part2(exampleInput)).toEqual(2713310158);
     });
 
     it('part 2 answer is correct', () => {
-        expect(part2TheSmartWay(sampleInput)).toEqual(19573408701);
+        expect(part2(sampleInput)).toEqual(19573408701);
     });
 });
