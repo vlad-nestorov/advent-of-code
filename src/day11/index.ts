@@ -1,4 +1,4 @@
-import {ascendingSortCompare, multiply} from "../utils";
+import {add, ascendingSortCompare, divide, multiply, subtract} from "../utils";
 
 const monkeyRegex = new RegExp(
 'Monkey \\d+:\\s*' +
@@ -17,15 +17,17 @@ export type Monkey = {
 }
 
 
-const operationLookup: { [key in string]: (a:number, b:number) => number} = {
-    '*': (a, b) => a * b,
-    '/': (a, b) => a / b,
-    '+': (a, b) => a + b,
-    '-': (a, b) => a - b,
+const operationLookup = {
+    '*': multiply,
+    '/': divide,
+    '+': add,
+    '-': subtract,
 }
 
-export const getOperation = (operation: string, operand: string) =>
-    (level: number) => operationLookup[operation](level, operand === 'old' ? level: Number(operand))
+type OperationString = keyof typeof operationLookup;
+
+export const getOperation = (operation: OperationString, operand: string) =>
+    (level: number) => operationLookup[operation]!(level, operand === 'old' ? level: Number(operand))
 
 
 export const parseInput = (input: string): Monkey[] =>
@@ -33,7 +35,7 @@ export const parseInput = (input: string): Monkey[] =>
         .map(monkey => monkey.match(monkeyRegex))
         .map(match => ({
             items: match![1].split(",").map(Number),
-            operation: getOperation(match![2], match![3]),
+            operation: getOperation(match![2] as OperationString, match![3]),
             test: Number(match![4]),
             nextMonkey: [match![6], match![5]].map(Number),
             inspected: 0,
