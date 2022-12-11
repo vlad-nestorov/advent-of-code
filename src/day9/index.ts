@@ -1,4 +1,4 @@
-import {sum} from "../utils";
+import {add} from "../utils";
 
 export const parseInput = (input: string): Direction[] => {
     return input.split("\r\n")
@@ -56,7 +56,7 @@ export const startingState = (tails: number): State => ({
 export const moveHead = (state: State, moveInstruction: Direction) => {
 
     let direction = moveInstruction.map(Math.sign) as Direction;
-    let magnitude = moveInstruction.map(Math.abs).reduce(sum);
+    let magnitude = moveInstruction.map(Math.abs).reduce(add);
 
     for (let step = 0; step < magnitude; step++) {
         state.head = add(state.head, direction);

@@ -14,9 +14,11 @@ describe('Day 11', function () {
             test: 23,
             nextMonkey: [3, 2]
         })
+        expect(result[0].operation(12)).toEqual(12 * 19)
     })
 
     it('part 1 answer is correct', () => {
+        // 12649 too low
         expect(part1(exampleInput)).toEqual('');
     });
 

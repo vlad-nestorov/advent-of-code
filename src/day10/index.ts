@@ -1,4 +1,4 @@
-import {groupingReducer, intializeArray, sum} from "../utils";
+import {groupingReducer, intializeArray, add} from "../utils";
 
 export const executeInstructions = (input: string): number[] =>
     input.split("\r\n")
@@ -20,7 +20,7 @@ export const getSignalStrengths = (input: string) => {
 }
 
 
-export const part1 = (input: string) => getSignalStrengths(input).reduce(sum);
+export const part1 = (input: string) => getSignalStrengths(input).reduce(add);
 
 export const part2 = (input: string) => executeInstructions(input)
     .reduce(groupingReducer(40), [])

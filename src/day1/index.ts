@@ -1,9 +1,9 @@
-import {ascendingSortCompare, sum} from "../utils";
+import {ascendingSortCompare, add} from "../utils";
 
 const sumElfCalories = (elf: string) =>
     elf.split("\r\n")
         .map(Number)
-        .reduce(sum)
+        .reduce(add)
 
 const sortedCaloriesByElf = (input: string) => input.split("\r\n\r\n")
     .map(sumElfCalories)
@@ -14,4 +14,4 @@ export const part1 = (input: string) => sortedCaloriesByElf(input)
 
 export const part2 =  (input: string) => sortedCaloriesByElf(input)
     .slice(-3)
-    .reduce(sum)
+    .reduce(add)

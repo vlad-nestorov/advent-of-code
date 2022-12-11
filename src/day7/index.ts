@@ -1,4 +1,4 @@
-import {sum} from "../utils";
+import {add} from "../utils";
 
 export type Node<T> = {
     parent?: Node<T>;
@@ -26,7 +26,7 @@ const fixSize = (tree: Node<File>) => {
     if (!tree.size) {
         tree.size = (tree.children ?? [])
             .map(child => fixSize(child))
-            .reduce(sum, 0)
+            .reduce(add, 0)
     }
     return tree.size;
 }
@@ -103,7 +103,7 @@ export const parseInput = (input: string) => {
 export const part1 = (input: string) => getNodes(parseInput(input)['root'])
     .filter(file => file.type === 'd' && file.size < 100000)
     .map(file => file.size)
-    .reduce(sum, 0);
+    .reduce(add, 0);
 
 export const part2 = (input: string) => {
     let folders = parseInput(input)['root'];
