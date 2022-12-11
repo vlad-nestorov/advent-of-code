@@ -9,9 +9,9 @@ const monkeyRegex = new RegExp(
     'If false: throw to monkey (.+)'
 )
 export type Monkey = {
-    items: number[],
-    operation: (level: number) => number,
-    test: number,
+    items: bigint[],
+    operation: (level: bigint) => bigint,
+    test: bigint,
     nextMonkey: number[]
     inspected: number,
 }
@@ -27,25 +27,25 @@ const operationLookup = {
 type OperationString = keyof typeof operationLookup;
 
 export const getOperation = (operation: OperationString, operand: string) =>
-    (level: number) => operationLookup[operation]!(level, operand === 'old' ? level: Number(operand))
+    (level: bigint) => operationLookup[operation]!(level, operand === 'old' ? level: BigInt(operand))
 
 
 export const parseInput = (input: string): Monkey[] =>
     input.split("\r\n\r\n")
         .map(monkey => monkey.match(monkeyRegex))
         .map(match => ({
-            items: match![1].split(",").map(Number),
+            items: match![1].split(",").map(BigInt),
             operation: getOperation(match![2] as OperationString, match![3]),
-            test: Number(match![4]),
+            test: BigInt(match![4]),
             nextMonkey: [match![6], match![5]].map(Number),
             inspected: 0,
         }))
 
-export const playRound = (monkeys: Monkey[]) => monkeys.forEach((value, index, array) => {
+export const playRound = (monkeys: Monkey[], reduceWorry = true) => monkeys.forEach((value, index, array) => {
     value.inspected += value.items.length;
     value.items
         .map(value.operation)
-        .map(level => Math.floor(level  / 3))
+        .map(level => reduceWorry ? level  / BigInt(3): level)
         .forEach(item => {
             array[value.nextMonkey[item % value.test ? 0:1]].items.push(item)
         });
@@ -58,7 +58,12 @@ export const part1 = (input: string) => {
         playRound(monkeys);
    }
     return monkeys.map(m => m.inspected).sort(ascendingSortCompare).slice(-2).reduce(multiply)
-
 }
 
-export const part2 = (input: string) => input;
+export const part2 = (input: string) => {
+        const monkeys = parseInput(input);
+        for (let i = 0; i < 10000; i++) {
+            playRound(monkeys, false);
+        }
+        return monkeys.map(m => m.inspected).sort(ascendingSortCompare).slice(-2).reduce(multiply)
+    }
