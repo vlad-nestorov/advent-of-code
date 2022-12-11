@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs'
-import {parseInput, part1, part2, playRound} from "./index";
+import {parseInput, part1, part2, part2TheSmartWay, playRound} from "./index";
 
 describe('Day 11', function () {
     const sampleInput = readFileSync('src/day11/sample_input.txt', 'utf-8');
@@ -37,10 +37,10 @@ describe('Day 11', function () {
     });
 
     it('part 2 answer is correct against example', () => {
-        expect(part2(exampleInput)).toEqual(2713310158);
+        expect(part2TheSmartWay(exampleInput)).toEqual(2713310158);
     });
 
     it('part 2 answer is correct', () => {
-        expect(part2(sampleInput)).toEqual('');
+        expect(part2TheSmartWay(sampleInput)).toEqual(19573408701);
     });
 });

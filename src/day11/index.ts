@@ -52,6 +52,17 @@ export const playRound = (monkeys: Monkey[], reduceWorry = true) => monkeys.forE
     value.items = [];
 })
 
+export const playRoundTheSmartWay = (commonFactor: bigint,monkeys: Monkey[]) => monkeys.forEach((value, index, array) => {
+    value.inspected += value.items.length;
+    value.items
+        .map(value.operation)
+        .map(level => level % commonFactor)
+        .forEach(item => {
+            array[value.nextMonkey[item % value.test ? 0:1]].items.push(item)
+        });
+    value.items = [];
+})
+
 export const part1 = (input: string) => {
     const monkeys = parseInput(input);
     for (let i = 0; i < 20; i++) {
@@ -63,7 +74,23 @@ export const part1 = (input: string) => {
 export const part2 = (input: string) => {
         const monkeys = parseInput(input);
         for (let i = 0; i < 10000; i++) {
+            if (!(i % 100)) {
+                console.log(`=====================${i}=======================`)
+                console.log(JSON.stringify(monkeys, (key, value) =>
+                    typeof value === "bigint" ? value.toString() + "n" : value));
+            }
             playRound(monkeys, false);
         }
         return monkeys.map(m => m.inspected).sort(ascendingSortCompare).slice(-2).reduce(multiply)
     }
+
+export const part2TheSmartWay = (input: string) => {
+    const monkeys = parseInput(input);
+    const commonFactor = monkeys.map(m => m.test).reduce(multiply);
+    for (let i = 0; i < 10000; i++) {
+        playRoundTheSmartWay(commonFactor, monkeys);
+    }
+    return monkeys.map(m => m.inspected).sort(ascendingSortCompare).slice(-2).reduce(multiply)
+}
+
+
