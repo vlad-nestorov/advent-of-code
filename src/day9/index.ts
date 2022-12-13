@@ -1,4 +1,4 @@
-import {add} from "../utils";
+import {add, addArray, subtractArray} from "../utils";
 
 export const parseInput = (input: string): Direction[] => {
     return input.split("\r\n")
@@ -19,13 +19,6 @@ export type Position = [number, number];
 export type Direction = Position;
 
 export type State = { head: Position, tail: Position[], visited: Set<string> }
-
-// assumes same size arrays
-const addArray = <T extends number[]>(array1: T, array2: T): T =>
-    array1.map((value, index) => value + array2[index]) as T;
-
-const subtractArray = <T extends number[]>(array1: T, array2: T): T =>
-    array1.map((value, index) => value - array2[index]) as T;
 
 
 

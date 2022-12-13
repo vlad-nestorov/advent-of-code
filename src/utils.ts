@@ -56,3 +56,12 @@ export const firstItemOfSet = <T>(set: Set<T>) => set.values().next().value;
 
 export const intializeArray = <T>(length: number, generator: (index: number) => T) =>
     Array.from({length}, (_,index) => generator(index));
+
+
+export const charLowercaseA = 'a'.charCodeAt(0);
+export const charToInt = (char: string) => char.charCodeAt(0) - charLowercaseA // assumes same size arrays
+
+export const addArray = <T extends number[]>(array1: T, array2: T): T =>
+    array1.map((value, index) => value + array2[index]) as T;
+export const subtractArray = <T extends number[]>(array1: T, array2: T): T =>
+    array1.map((value, index) => value - array2[index]) as T;
