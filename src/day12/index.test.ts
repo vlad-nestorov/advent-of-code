@@ -13,6 +13,10 @@ describe('Day 12', function () {
         expect(part1(sampleInput)).toEqual(440);
     });
 
+    it('part 2 answer is correct for example', () => {
+        expect(part2(exampleInput)).toEqual(29);
+    });
+
     it('part 2 answer is correct', () => {
         expect(part2(sampleInput)).toEqual('');
     });
