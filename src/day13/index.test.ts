@@ -20,8 +20,11 @@ describe(`Day ${DAY}`, function () {
         expect(part1(sampleInput)).toEqual(5806);
     });
 
+    it('part 2 answer is correct against example', () => {
+        expect(part2(exampleInput)).toEqual(140);
+    });
 
     it('part 2 answer is correct', () => {
-        expect(part2(sampleInput)).toEqual('');
+        expect(part2(sampleInput)).toEqual(23600);
     });
 });
