@@ -7,19 +7,16 @@ export const parseInput = (input: string): Array<RecursiveArray> =>
         .filter(l => !!l)
         .map(l => JSON.parse(l))
 
+export const box = (item: number | RecursiveArray) => typeof item === 'number' ? [item] : item;
+
 export const comparePackets = (left: RecursiveArray, right: RecursiveArray): number => {
 
     for (let i = 0; i < Math.min(left.length, right.length); i++) {
         const [a, b] = [left[i], right[i]];
-        if (typeof a === 'number' && typeof b === 'number') {
-            if (a === b) {
-                continue;
-            } else {
-                return a - b;
-            }
-        }
 
-        const innerResult = comparePackets((typeof a === 'number') ? [a] : a, (typeof b === 'number') ? [b] : b);
+        const innerResult = (typeof a === 'number' && typeof b === 'number') ? a - b :
+            comparePackets(box(a), box( b));
+
         if (innerResult !== 0) {
             return innerResult;
         }
