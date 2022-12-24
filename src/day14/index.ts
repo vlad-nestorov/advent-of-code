@@ -1,38 +1,61 @@
-import {intializeArray} from "../utils";
+import { groupingReducer, intializeArray, subtractArray} from "../utils";
 
+type Coordinate = number[];
 type Point = {
-    xy: number[],
-    blocked: boolean
+    xy: Coordinate,
+    type: 'wall' | 'air' | 'sand' | 'origin'
 }
 
 
-
-export const parseInput = (input: string): Point[][] => input.split("\r\n")
-    .map(l => l.split(" -> ").map(p => ({
-        xy: p.split(',').map(Number),
-        blocked: true
-    })));
+export const parseInput = (input: string): Coordinate[][] => input.split("\r\n")
+    .map(l => l.split(" -> ").map(p => p.split(',').map(Number)));
 
 
-export const isOnLine = (xy: number[], p1: Point, p2: Point) => [0, 1].every(i => xy[i] >= Math.min(p1.xy[i], p2.xy[i]) && xy[i] <= Math.max(p1.xy[i], p2.xy[i]))
+export const printPlayingField = (field: Point[][]) => field.map(row =>
+    row.map(p => ({
+        'wall': '#',
+        'air': '.',
+        'sand': 'O',
+        'origin': '+'
 
-export const printPlayingField = (field: boolean[][]) => field.map(row => row.map(blocked => blocked ? '#' : '.').join(" ")).join("\n");
+    })[p.type]).join(" ")
+).join("\n");
 
 export const part1 = (input: string) => {
-    const walls = parseInput(input);
+    let walls = parseInput(input);
 
     const origin = [500, 0]
 
-    const bounds = walls.flat(1).reduce((acc, value) => ({
-        left: Math.min(acc.left, value.xy[0]),
-        right: Math.max(acc.right, value.xy[0]),
-        down: Math.max(acc.down, value.xy[1])
-    }), {left: 500, right: 500, down: 0})
+    const bounds = walls.flat(1).reduce((acc, wall) => ({
+        left: Math.min(acc.left, wall[0]),
+        right: Math.max(acc.right, wall[0]),
+        up: 0,
+        down: Math.max(acc.down, wall[1])
+    }), {left: 500, right: 500, up:0, down: 0})
 
-    const playingField: boolean[][] = intializeArray(bounds.down + 1, (y) =>
-        intializeArray(bounds.right - bounds.left + 1, (x) =>
-         walls.some(wall => wall.some((point, index) => index < wall.length - 1 && isOnLine([x + bounds.left, y], point, wall[index + 1])))
+    bounds.right += 1;
+    bounds.down += 1;
+
+    const playingField: Point[][] = intializeArray(bounds.down, (y) =>
+        intializeArray(bounds.right - bounds.left, (x) => ({
+            xy: [x, y],
+            type: 'air'
+        })
     ));
+
+    const normalizeCoordinate = (xy: Coordinate) => subtractArray(xy, [bounds.left, bounds.up]);
+
+    walls.flatMap(wall => wall
+        .map(normalizeCoordinate)
+        .reduce(groupingReducer(2, 1), [])
+    ).forEach(([p1, p2]) => {
+        const direction = subtractArray(p1, p2).map(Math.sign);
+        for (let i = p1; i[0] != p2[0] || i[1] != p2[1]; i = subtractArray(i, direction)) {
+            playingField[i[1]][i[0]].type = 'wall'
+        }
+    })
+
+
 
     return printPlayingField(playingField);
 }
