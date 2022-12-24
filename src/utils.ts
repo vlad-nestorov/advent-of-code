@@ -44,9 +44,9 @@ export const intersect = <T>(...sets: Set<T>[]): Set<T> => {
     return result;
 }
 
-export function groupingReducer<T>(groupSize: 2): (accumulator: T[][], currentValue: T, index: number) => [T, T][]
+export function groupingReducer<T>(groupSize: 2, overlap: number): (accumulator: T[][], currentValue: T, index: number) => [T, T][]
 export function groupingReducer<T>(groupSize: number): (accumulator: T[][], currentValue: T, index: number) => T[][]
-export function groupingReducer<T>(groupSize: number): (accumulator: T[][], currentValue: T, index: number) => T[][] {
+export function groupingReducer<T>(groupSize: number, overlap = 0): (accumulator: T[][], currentValue: T, index: number) => T[][] {
     return (accumulator, currentValue, index) => {
         if (index % groupSize) {
             accumulator[accumulator.length - 1].push(currentValue)
