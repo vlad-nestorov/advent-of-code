@@ -4,8 +4,8 @@ export function add(a: any, b: any) {
     return a + b;
 }
 
-export function subtract(a: number, b: number): number;
 export function subtract(a: bigint, b: bigint): bigint;
+export function subtract(a: number, b: number): number;
 export function subtract(a: any, b: any): any {
     return a - b;
 }
@@ -66,5 +66,12 @@ export const charToInt = (char: string) => char.charCodeAt(0) - charLowercaseA /
 
 export const addArray = <T extends number[]>(array1: T, array2: T): T =>
     array1.map((value, index) => value + array2[index]) as T;
-export const subtractArray = <T extends number[]>(array1: T, array2: T): T =>
-    array1.map((value, index) => value - array2[index]) as T;
+
+export const subtractArray = <T extends Array<number>>(left: T, right: T): T =>
+    applyToArray(left, right, subtract) as T;
+
+// assumes same size arrays.
+export const applyToArray = <T>(left: Array<T>, right: Array<T>, operation: (l: T, r: T) => T) : Array<T> =>
+    left.map((value, index) => operation(value,  right[index]));
+
+
