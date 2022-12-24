@@ -18,6 +18,6 @@ describe('Day 12', function () {
     });
 
     it('part 2 answer is correct', () => {
-        expect(part2(sampleInput)).toEqual('');
+        expect(part2(sampleInput)).toEqual(439);
     });
 });
