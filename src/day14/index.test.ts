@@ -17,10 +17,10 @@ describe(`Day ${DAY}`, function () {
     });
 
     it('part 2 answer is correct against example', () => {
-        expect(part2(exampleInput)).toEqual('');
+        expect(part2(exampleInput)).toEqual(93);
     });
 
     it('part 2 answer is correct', () => {
-        expect(part2(sampleInput)).toEqual('');
+        expect(part2(sampleInput)).toEqual(29044);
     });
 });
