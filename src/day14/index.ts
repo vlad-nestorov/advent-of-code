@@ -58,6 +58,7 @@ export const part1 = (input: string) => {
         for (let i = p1; i[0] != p2[0] || i[1] != p2[1]; i = subtractArray(i, direction)) {
             playingFieldElement(i).type = 'wall'
         }
+        playingFieldElement(p2).type = 'wall'
     })
 
 
@@ -68,6 +69,7 @@ export const part1 = (input: string) => {
     const maxBound = normalizeCoordinate(bounds.max)
 
     let sand = normalizedOrigin
+    let sandAtRest = 0;
     while (compareArrays(sand, minBound, ((l, r) => l >= r))
     && compareArrays(sand, maxBound, ((l, r) => l < r))) {
         playingFieldElement(sand).type = 'sand';
@@ -75,19 +77,20 @@ export const part1 = (input: string) => {
             .map(playingFieldElement)
             .find(p => p.type === 'air')
 
-        resetScreen();
-        console.log(printPlayingField(playingField));
+        // resetScreen();
+        // console.log(printPlayingField(playingField));
 
         if (nextSpot) {
             playingFieldElement(sand).type = 'air';
             sand = nextSpot.xy;
         } else {
             sand = normalizedOrigin;
+            sandAtRest++;
         }
 
 
     }
-    return sand;
+    return sandAtRest;
 }
 
 

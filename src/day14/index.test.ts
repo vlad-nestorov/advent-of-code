@@ -9,15 +9,15 @@ describe(`Day ${DAY}`, function () {
 
 
     it('part 1 answer is correct against example', () => {
-        expect(part1(exampleInput)).toEqual('');
+        expect(part1(exampleInput)).toEqual(24);
     });
 
     it('part 1 answer is correct', () => {
-        expect(part1(sampleInput)).toEqual('');
+        expect(part1(sampleInput)).toEqual(979);
     });
 
     it('part 2 answer is correct against example', () => {
-        expect(part1(exampleInput)).toEqual('');
+        expect(part2(exampleInput)).toEqual('');
     });
 
     it('part 2 answer is correct', () => {
