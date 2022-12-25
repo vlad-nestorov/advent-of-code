@@ -1,4 +1,5 @@
 import {addArray, applyToArray, groupingReducer, intializeArray, subtractArray} from "../utils";
+import {resetScreen} from "../display";
 
 type Coordinate = number[];
 type Point = {
@@ -51,6 +52,8 @@ export const part1 = (input: string) => {
         const direction = subtractArray(p1, p2).map(Math.sign);
         for (let i = p1; i[0] != p2[0] || i[1] != p2[1]; i = subtractArray(i, direction)) {
             playingFieldElement(i).type = 'wall'
+            resetScreen();
+            console.log(printPlayingField(playingField));
         }
     })
 
