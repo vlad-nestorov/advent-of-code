@@ -71,6 +71,12 @@ export const subtractArray = <T extends Array<number>>(left: T, right: T): T =>
     applyToArray(left, right, subtract) as T;
 
 // assumes same size arrays.
+export const compareArrays = <T>(left: Array<T>, right: Array<T>, predicate: (l: T, r: T) => boolean) : boolean =>
+    left.map((value, index) => predicate(value,  right[index])).every(result => result);
+
+
+
+// assumes same size arrays.
 export const applyToArray = <T>(left: Array<T>, right: Array<T>, operation: (l: T, r: T) => T) : Array<T> =>
     left.map((value, index) => operation(value,  right[index]));
 

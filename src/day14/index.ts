@@ -1,4 +1,4 @@
-import {addArray, applyToArray, groupingReducer, intializeArray, subtractArray} from "../utils";
+import {addArray, applyToArray, compareArrays, groupingReducer, intializeArray, subtractArray} from "../utils";
 import {resetScreen} from "../display";
 
 type Coordinate = number[];
@@ -32,16 +32,21 @@ export const part1 = (input: string) => {
         max: applyToArray(acc.max, wall, Math.max),
     }), {min: origin, max: origin})
 
-    bounds.max = addArray(bounds.max, [1,1]);
+    bounds.max = addArray(bounds.max, [1, 1]);
 
     const playingField: Point[][] = intializeArray(bounds.max[1], (y) =>
         intializeArray(bounds.max[0] - bounds.min[0], (x) => ({
-            xy: [x, y],
-            type: 'air'
-        })
-    ));
+                xy: [x, y],
+                type: 'air'
+            })
+        ));
 
-    const playingFieldElement = (coordinate: Coordinate)  => playingField[coordinate[1]][coordinate[0]];
+    const playingFieldElement = (coordinate: Coordinate): Point =>
+        (playingField[coordinate[1]] ?? [])[coordinate[0]]
+            ?? {
+                xy: coordinate,
+                type: 'air'
+            };
 
     const normalizeCoordinate = (xy: Coordinate) => subtractArray(xy, bounds.min);
 
@@ -52,16 +57,37 @@ export const part1 = (input: string) => {
         const direction = subtractArray(p1, p2).map(Math.sign);
         for (let i = p1; i[0] != p2[0] || i[1] != p2[1]; i = subtractArray(i, direction)) {
             playingFieldElement(i).type = 'wall'
-            resetScreen();
-            console.log(printPlayingField(playingField));
         }
     })
 
 
-    playingFieldElement(normalizeCoordinate(origin)).type = 'origin';
+    const normalizedOrigin = normalizeCoordinate(origin);
+    playingFieldElement(normalizedOrigin).type = 'origin';
+
+    const minBound = normalizeCoordinate(bounds.min)
+    const maxBound = normalizeCoordinate(bounds.max)
+
+    let sand = normalizedOrigin
+    while (compareArrays(sand, minBound, ((l, r) => l >= r))
+    && compareArrays(sand, maxBound, ((l, r) => l < r))) {
+        playingFieldElement(sand).type = 'sand';
+        const nextSpot = [[0, 1], [-1, 1], [1, 1]].map(direction => addArray(sand, direction))
+            .map(playingFieldElement)
+            .find(p => p.type === 'air')
+
+        resetScreen();
+        console.log(printPlayingField(playingField));
+
+        if (nextSpot) {
+            playingFieldElement(sand).type = 'air';
+            sand = nextSpot.xy;
+        } else {
+            sand = normalizedOrigin;
+        }
 
 
-    return printPlayingField(playingField);
+    }
+    return sand;
 }
 
 
