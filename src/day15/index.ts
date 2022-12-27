@@ -2,26 +2,16 @@ import {add, applyToArray, group, subtractArray} from "../utils";
 
 type Position = [x:number, y:number];
 
-type XY = {
+type Sensor = {
     xy: Position
-}
-type SensorPoint = XY & {
-    type: 'sensor'
     closestBeacon: Position
     distance: number
 };
 
-type OtherPoint = XY & {
-    type: 'beacon' | 'air' | 'unknown'
-}
-
-type Point =  SensorPoint | OtherPoint;
-
-
 export const distance = (a: Position, b: Position) => subtractArray(a, b).map(Math.abs).reduce(add);
 
 
-export const parseInput = (input: string): SensorPoint[] => input.split("\r\n")
+export const parseInput = (input: string): Sensor[] => input.split("\r\n")
     .map(line => line.match(/Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)/)!)
     .flatMap(match => match.slice(1).map(Number))
     .reduce(group(2), [])
@@ -34,12 +24,12 @@ export const parseInput = (input: string): SensorPoint[] => input.split("\r\n")
                 type: 'sensor'
             }));
 
-const getBounds = (point: SensorPoint) => ({
+const getBounds = (point: Sensor) => ({
     min: point.xy.map(c => c - point.distance),
     max: point.xy.map(c => c + point.distance),
 });
 
-function setupPlayingField(input: string) {
+export const part1 = (input: string, line: number) => {
     const sensors = parseInput(input);
 
     const beaconPositions = new Set(sensors.map(s => s.closestBeacon.toString()));
@@ -48,11 +38,6 @@ function setupPlayingField(input: string) {
         min: applyToArray(acc.min, bound.min, Math.min),
         max: applyToArray(acc.max, bound.max, Math.max)
     }))
-    return {sensors, beaconPositions, bounds};
-}
-
-export const part1 = (input: string, line: number) => {
-    const {sensors, beaconPositions, bounds} = setupPlayingField(input);
 
     let airCount = 0;
     for (let point: Position = [bounds.min[0], line]; point[0] < bounds.max[0]; point[0]++) {
@@ -65,7 +50,7 @@ export const part1 = (input: string, line: number) => {
 }
 
 export const   part2 = (input: string, maxPosition: Position) => {
-    const {sensors, beaconPositions, bounds} = setupPlayingField(input);
+    const sensors = parseInput(input);
 
     for (let x = 0; x < maxPosition[0]; x++) {
         for (let y = 0; y < maxPosition[1]; y++) {
