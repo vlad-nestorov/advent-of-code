@@ -64,14 +64,19 @@ export const part1 = (input: string, line: number) => {
     return airCount;
 }
 
-export const part2 = (input: string, maxPosition: Position) => {
+export const   part2 = (input: string, maxPosition: Position) => {
     const {sensors, beaconPositions, bounds} = setupPlayingField(input);
 
     for (let x = 0; x < maxPosition[0]; x++) {
         for (let y = 0; y < maxPosition[1]; y++) {
-            if(sensors.every(s => distance([x, y], s.xy) > s.distance)) {
+            const blockedSquares = sensors
+                .map(s => s.distance - distance([x, y], s.xy))
+                .reduce((acc, v) => Math.max(acc, v));
+
+            if(blockedSquares < 0) {
                 return x * 4000000 + y;
             }
+            y += blockedSquares;
         }
     }
 }

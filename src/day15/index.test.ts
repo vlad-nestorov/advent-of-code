@@ -20,6 +20,6 @@ describe(`Day ${DAY}`, function () {
     });
 
     it('part 2 answer is correct', () => {
-        expect(part2(sampleInput, [4000000, 4000000])).toEqual('');
+        expect(part2(sampleInput, [4000000, 4000000])).toEqual(10996191429555);
     });
 });
