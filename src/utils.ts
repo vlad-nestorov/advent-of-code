@@ -48,7 +48,7 @@ export type CreateArrayOfLength<T, L extends number, ACC extends T[]> = ACC['len
 
 export type ArrayOfLength<T, L extends number> = CreateArrayOfLength<T, L, []>
 
-export function groupingReducer<T, Length extends number>(groupSize: Length, overlap = 0): (accumulator: ArrayOfLength<T, Length>[], currentValue: T, index: number, array: T[]) => ArrayOfLength<T, Length>[] {
+export function group<T, Length extends number>(groupSize: Length, overlap = 0): (accumulator: ArrayOfLength<T, Length>[], currentValue: T, index: number, array: T[]) => ArrayOfLength<T, Length>[] {
     return (accumulator, currentValue, index, array) => {
         if (index + groupSize <= array.length && index % (groupSize - overlap) === 0) {
             accumulator.push(array.slice(index, index + groupSize) as ArrayOfLength<T, Length>);

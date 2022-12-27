@@ -1,4 +1,4 @@
-import {firstItemOfSet, groupingReducer, intersect, add} from "../utils";
+import {firstItemOfSet, group, intersect, add} from "../utils";
 
 const findPriority = (item: string) => parseInt(item, 36) - 9 + (item === item.toLowerCase() ? 0 : 26);
 
@@ -14,7 +14,7 @@ export const part1 = (input: string) => input.split("\r\n")
 
 export const part2 = (input: string) => input.split("\r\n")
     .map(value => new Set(value))
-    .reduce(groupingReducer(3), [])
+    .reduce(group(3), [])
     .map(group => intersect(...group))
     .map(firstItemOfSet)
     .map(findPriority)

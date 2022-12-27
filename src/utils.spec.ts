@@ -1,4 +1,4 @@
-import {groupingReducer} from "./utils";
+import {group} from "./utils";
 
 describe('Utils', function () {
     describe('groupingReducer', function () {
@@ -8,7 +8,7 @@ describe('Utils', function () {
             [3, 1, [1, 2, 3, 4, 5, 6], [[1, 2, 3], [3, 4, 5]]],
             [3, 2, [1, 2, 3, 4, 5, 6], [[1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6]]]
         ])('should correctly handle overlap param', function (groupSize, overlap, input, expected) {
-            expect(input.reduce(groupingReducer(groupSize, overlap), [])).toEqual(expected);
+            expect(input.reduce(group(groupSize, overlap), [])).toEqual(expected);
         });
     });
 });

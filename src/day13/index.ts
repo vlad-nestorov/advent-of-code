@@ -1,4 +1,4 @@
-import {add, groupingReducer, multiply, subtract} from "../utils";
+import {add, group, multiply, subtract} from "../utils";
 
 type RecursiveArray = Array<number | RecursiveArray>;
 
@@ -27,7 +27,7 @@ export const comparePackets = (left: RecursiveArray, right: RecursiveArray): num
 
 
 export const part1 = (input: string) => parseInput(input)
-    .reduce<[RecursiveArray,RecursiveArray][]>(groupingReducer(2), [])
+    .reduce<[RecursiveArray,RecursiveArray][]>(group(2), [])
     .map(([left, right]) => comparePackets(left, right))
    .map((inOrder, index) => inOrder < 0 ? index + 1 : 0)
    .reduce(add)

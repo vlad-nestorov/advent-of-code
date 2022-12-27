@@ -1,4 +1,4 @@
-import {groupingReducer, intializeArray, add} from "../utils";
+import {group, intializeArray, add} from "../utils";
 
 export const executeInstructions = (input: string): number[] =>
     input.split("\r\n")
@@ -23,7 +23,7 @@ export const getSignalStrengths = (input: string) => {
 export const part1 = (input: string) => getSignalStrengths(input).reduce(add);
 
 export const part2 = (input: string) => executeInstructions(input)
-    .reduce(groupingReducer(40), [])
+    .reduce(group(40), [])
     .map( row => row.map((spritePosition, scanPosition) => Math.abs(spritePosition - scanPosition) < 2)
         .map(on => on ? '#' : '.')
         .join(''))

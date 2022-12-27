@@ -1,4 +1,4 @@
-import {addArray, applyToArray, compareArrays, groupingReducer, intializeArray, subtractArray} from "../utils";
+import {addArray, applyToArray, compareArrays, group, intializeArray, subtractArray} from "../utils";
 
 import {writeFileSync} from 'node:fs';
 
@@ -53,7 +53,7 @@ export const part1 = (input: string) => {
 
     walls.flatMap(wall => wall
         .map(normalizeCoordinate)
-        .reduce(groupingReducer(2, 1), [])
+        .reduce(group(2, 1), [])
     ).forEach(([p1, p2]) => {
         const direction = subtractArray(p1, p2).map(Math.sign);
         for (let i = p1; i[0] != p2[0] || i[1] != p2[1]; i = subtractArray(i, direction)) {
@@ -128,7 +128,7 @@ export const part2 = (input: string) => {
 
     walls.flatMap(wall => wall
         .map(normalizeCoordinate)
-        .reduce(groupingReducer(2, 1), [])
+        .reduce(group(2, 1), [])
     ).forEach(([p1, p2]) => {
         const direction = subtractArray(p1, p2).map(Math.sign);
         for (let i = p1; i[0] != p2[0] || i[1] != p2[1]; i = subtractArray(i, direction)) {
