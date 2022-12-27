@@ -39,7 +39,7 @@ const getBounds = (point: SensorPoint) => ({
     max: point.xy.map(c => c + point.distance),
 });
 
-export const part1 = (input: string, line: number) => {
+function setupPlayingField(input: string) {
     const sensors = parseInput(input);
 
     const beaconPositions = new Set(sensors.map(s => s.closestBeacon.toString()));
@@ -48,6 +48,11 @@ export const part1 = (input: string, line: number) => {
         min: applyToArray(acc.min, bound.min, Math.min),
         max: applyToArray(acc.max, bound.max, Math.max)
     }))
+    return {sensors, beaconPositions, bounds};
+}
+
+export const part1 = (input: string, line: number) => {
+    const {sensors, beaconPositions, bounds} = setupPlayingField(input);
 
     let airCount = 0;
     for (let point: Position = [bounds.min[0], line]; point[0] < bounds.max[0]; point[0]++) {
@@ -59,6 +64,14 @@ export const part1 = (input: string, line: number) => {
     return airCount;
 }
 
-export const part2 = (input: string) => {
-    return parseInput(input);
+export const part2 = (input: string, maxPosition: Position) => {
+    const {sensors, beaconPositions, bounds} = setupPlayingField(input);
+
+    for (let x = 0; x < maxPosition[0]; x++) {
+        for (let y = 0; y < maxPosition[1]; y++) {
+            if(sensors.every(s => distance([x, y], s.xy) > s.distance)) {
+                return x * 4000000 + y;
+            }
+        }
+    }
 }
