@@ -35,12 +35,35 @@ export const part1 = (input: string) => {
 ${ ['No valves', 'Valve ', 'Valves '][Math.min(2,state.openValves.length)]}${state.openValves.join(', ')} are open.
 You ${action} to valve ${state.location}.
 `
+    const shortestPath = (source: string, target: string): string[] => {
+        let frontier = getValve(source).connects.map(getValve);
+        let visited = { [source]: [] as string[] };
+
+
+
+        while(!visited.hasOwnProperty(target)) {
+
+            frontier.map(valve => ({...valve, }))reduce(
+                (acc, valve) => ({...acc, [valve.valve]: [source]}),
+            );
+
+            for (const valve of frontier) {
+                visited = {
+                    [valve]: [],
+                    ...visited
+                }
+            }
+        }
+        return visited[target]!;
+    }
 
     while (state.time < 30) {
         state.time++;
         state.location = getValve(state.location).connects[0];
         actions.push(print('move'));
     }
+
+
     return actions.join('\n');
 }
 
