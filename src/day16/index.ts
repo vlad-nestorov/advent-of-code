@@ -88,7 +88,7 @@ export const part1 = (input: string) => {
 
     }
 
-    return actions.join('\n\n');
+    return [...actions, `Total Pressure Released ${state.pressureReleased}`].join('\n\n');
 
 }
 

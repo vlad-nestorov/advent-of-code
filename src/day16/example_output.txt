@@ -111,3 +111,5 @@ Valves BB, CC, DD, EE, HH, and JJ are open, releasing 81 pressure.
 
 == Minute 30 ==
 Valves BB, CC, DD, EE, HH, and JJ are open, releasing 81 pressure.
+
+Total Pressure Released 1651
