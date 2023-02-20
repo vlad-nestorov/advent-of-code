@@ -14,27 +14,6 @@ export const parseInput = (input: string) => input.split("\r\n")
         tunnels: match[3].split(", ")
     }));
 
-export const generateViableMoves = (valves: Valve[]): string[][] => {
-    const initialValves = valves.filter(v => v.flow || v.room === firstRoom).map(v => v.room);
-    const shortestPaths = getShortestPaths(initialValves, valves);
-
-    const generatePaths = (location: string, moves: string[], remainingValves: string[]): string[][] => {
-        const nextPaths = remainingValves.map(valve => ({
-            location: valve,
-            // valve included in path twice to represent opening the valve.
-            path: [...moves, ...shortestPaths[location][valve], valve],
-            remaining: remainingValves.filter(v => v !== valve),
-        })).filter(o => o.path.length <= 30)
-
-        if (nextPaths.length === 0) {
-            return [moves];
-        } else {
-            return nextPaths.flatMap(o => generatePaths(o.location, o.path, o.remaining));
-        }
-    }
-
-    return generatePaths(firstRoom, [], initialValves);//.map(p => p.map(getValve))
-};
 
 type ShortPathLookup = { [source in string]: { [target in string]: string[] } };
 export const getShortestPaths = (targetValves: string[], valves: Valve[]) => {
@@ -68,6 +47,28 @@ export const getShortestPaths = (targetValves: string[], valves: Valve[]) => {
     return shortestPaths;
 }
 
+export const generateViableMoves = (valves: Valve[]): string[][] => {
+    const initialValves = valves.filter(v => v.flow || v.room === firstRoom).map(v => v.room);
+    const shortestPaths = getShortestPaths(initialValves, valves);
+
+    const generatePaths = ({location, moves, remaining}: {location: string, moves: string[], remaining: string[]}): string[][] => {
+        const nextPaths = remaining.map(valve => ({
+            location: valve,
+            // valve included in moves twice to represent opening the valve.
+            moves: [...moves, ...shortestPaths[location][valve], valve],
+            remaining: remaining.filter(v => v !== valve),
+        })).filter(({moves}) => moves.length <= 30)
+
+        if (nextPaths.length === 0) {
+            return [moves];
+        } else {
+            return nextPaths.flatMap(generatePaths);
+        }
+    }
+
+    return generatePaths({location: firstRoom, moves: [], remaining: initialValves} );
+};
+
 export const part1 = (input: string) => {
     const valves = parseInput(input);
     const viableMoves = generateViableMoves(valves);
@@ -84,7 +85,8 @@ export const part1 = (input: string) => {
         }
         return totalPressureReleased;
     })
-        .reduce((a, b) => Math.max(a, b))
+    .reduce((a, b) => Math.max(a, b));
+
 }
 export const part2 = (input: string) => {
     return parseInput(input);
