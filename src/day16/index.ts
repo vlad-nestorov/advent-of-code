@@ -47,7 +47,7 @@ export const getShortestPaths = (targetValves: string[], valves: Valve[]) => {
     return shortestPaths;
 }
 
-export const generateViableMoves = (valves: Valve[]): string[][] => {
+export const generateViableMoves = (valves: Valve[], maxMoves = 30): string[][] => {
     const initialValves = valves.filter(v => v.flow || v.room === firstRoom).map(v => v.room);
     const shortestPaths = getShortestPaths(initialValves, valves);
 
@@ -57,7 +57,7 @@ export const generateViableMoves = (valves: Valve[]): string[][] => {
             // valve included in moves twice to represent opening the valve.
             moves: [...moves, ...shortestPaths[location][valve], valve],
             remaining: remaining.filter(v => v !== valve),
-        })).filter(({moves}) => moves.length <= 30)
+        })).filter(({moves}) => moves.length <= maxMoves)
 
         if (nextPaths.length === 0) {
             return [moves];
@@ -89,5 +89,32 @@ export const part1 = (input: string) => {
 
 }
 export const part2 = (input: string) => {
-    return parseInput(input);
+    const valves = parseInput(input);
+    const viableMoves = generateViableMoves(valves);
+
+    return viableMoves.flatMap(movesA => viableMoves.map(movesB => {
+        let paths = [
+            [firstRoom, ...movesA],
+            [firstRoom, ...movesB]
+        ];
+
+        let flowRate = 0;
+        let totalPressureReleased = 0;
+        let closedValves: { [key in string]: number } = valves.reduce((acc, valve) => ({...acc, ...{[valve.room]: valve.flow}}), {});
+
+        for (let time = 1; time < 27; time++) {
+            totalPressureReleased += flowRate;
+            [0, 1].forEach(player => {
+                const path = paths[player];
+                const location = path[time]
+                if (closedValves.hasOwnProperty(location) && time < path.length && path[time - 1] === location) {
+                    flowRate += closedValves[location];
+                    delete closedValves[location];
+                }
+            })
+        }
+        return totalPressureReleased;
+    }))
+    .reduce((a, b) => Math.max(a, b));
+
 }

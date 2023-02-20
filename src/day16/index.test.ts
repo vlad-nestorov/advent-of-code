@@ -16,7 +16,7 @@ describe(`Day ${DAY}`, function () {
     });
 
     it('part 2 answer is correct against example', () => {
-        expect(part2(exampleInput)).toEqual('');
+        expect(part2(exampleInput)).toEqual(1707);
     });
 
     it('part 2 answer is correct', () => {
