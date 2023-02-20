@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs'
-import {part1, part2} from "./index";
+import {generateViablePaths, getShortestPaths, parseInput, part1, part2} from "./index";
 
 const DAY = 16;
 
@@ -11,6 +11,10 @@ describe(`Day ${DAY}`, function () {
     it('part 1 answer is correct against example', () => {
         expect(part1(exampleInput)).toEqual(exampleOutput);
     });
+
+    it( 'getShortestPaths', () => {
+        expect(generateViablePaths(parseInput(exampleInput))).toEqual({})
+    })
 
     it('part 1 answer is correct', () => {
         expect(part1(sampleInput)).toEqual('');

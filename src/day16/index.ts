@@ -20,6 +20,60 @@ export const parseInput = (input: string) => input.split("\r\n")
         connects: match[3].split(", ")
     }));
 
+export const generateViablePaths = (valves: Valve[]): string[][] => {
+    const valvesWithFlow = valves.filter(v => v.flow).map(v => v.valve);
+    const shortestPaths = getShortestPaths(valves);
+    const getValve = (name: string) => valves.find(v => v.valve === name)!;
+
+    const generatePaths = (currentPath: string[], remainingValves: string[]): string[][] => {
+        const nextPaths = remainingValves.map((valve, index) => ({
+            // valve included in path twice to represent opening the valve.
+            path: [...currentPath, ...shortestPaths[currentPath[currentPath.length - 1]][valve], valve],
+            remaining: remainingValves.filter(v => v !== valve),
+        })).filter(o => o.path.length <= 30)
+
+        if (nextPaths.length === 0) {
+            return [currentPath];
+        } else {
+            return nextPaths.flatMap(o => generatePaths(o.path, o.remaining));
+        }
+    }
+
+    return generatePaths([], valvesWithFlow);//.map(p => p.map(getValve))
+};
+
+type ShortPathLookup = { [source in string]: { [target in string]: string[] } };
+export const getShortestPaths = (valves: Valve[]) => {
+
+    const valvesWithFlow = valves.filter(v => v.flow).map(v => v.valve);
+    const shortestPaths: ShortPathLookup = {};
+
+    const getValve = (name: string) => valves.find(v => v.valve === name)!;
+
+    for (const source of valvesWithFlow) {
+        let frontier = getValve(source).connects.map(getValve);
+        let visited = {[source]: [] as string[]};
+        const isVisited = (name: string) => visited.hasOwnProperty(name);
+
+        const shortestVisitedPath = (valve: Valve) => valve.connects
+            .filter(isVisited)
+            .map(tunnel => [...visited[tunnel], valve.valve])
+            .sort((a, b) => a.length - b.length)[0]!;
+
+        for (const target of valvesWithFlow) {
+            while (!isVisited(target)) {
+                visited = frontier.map(valve => ({[valve.valve]: shortestVisitedPath(valve)}))
+                    .reduce((acc, visit) => ({...acc, ...visit}), visited)
+                frontier = frontier.flatMap(valve => valve.connects)
+                    .filter((valve) => !visited.hasOwnProperty(valve))
+                    .map(getValve);
+            }
+        }
+        shortestPaths[source] = visited;
+    }
+
+    return shortestPaths;
+}
 
 export const part1 = (input: string) => {
     const valveInfo = parseInput(input);
