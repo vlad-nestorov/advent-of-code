@@ -92,7 +92,23 @@ export const part2 = (input: string) => {
     const valves = parseInput(input);
     const viableMoves = generateViableMoves(valves);
 
+    const getOpenedValves = (valves: string[]) =>
+        valves.reduce(
+            (acc, v, currentIndex, array) => [
+                ...acc,
+                ...(currentIndex > 0 && array[currentIndex - 1] === v ? [v] : [])
+            ],
+            [] as string[]);
+
     return viableMoves.flatMap(movesA => viableMoves.map(movesB => {
+
+        const [openedInA, openedInB] = [movesA, movesB].map(getOpenedValves);
+
+        if (openedInA.some(a => openedInB.includes(a))) {
+            // optimal paths for two players should not have them opening the same valves.
+            return 0;
+        }
+
         let paths = [
             [firstRoom, ...movesA],
             [firstRoom, ...movesB]
