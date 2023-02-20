@@ -1,70 +1,63 @@
 interface Valve {
-    valve: string;
+    room: string;
     flow: number;
-    connects: string[];
+    tunnels: string[];
 }
 
-interface State {
-    location: Valve;
-    time: number;
-    openValves: Valve[];
-    totalFlow: number;
-    pressureReleased: number;
-}
+const firstRoom = 'AA';
 
 export const parseInput = (input: string) => input.split("\r\n")
     .map(line => line.match(/Valve (\w+) has flow rate=(\d+); tunnels? leads? to valves? (.+)/)!)
     .map(match => (<Valve>{
-        valve: match[1],
+        room: match[1],
         flow: Number(match[2]),
-        connects: match[3].split(", ")
+        tunnels: match[3].split(", ")
     }));
 
-export const generateViablePaths = (valves: Valve[]): string[][] => {
-    const valvesWithFlow = valves.filter(v => v.flow).map(v => v.valve);
-    const shortestPaths = getShortestPaths(valves);
-    const getValve = (name: string) => valves.find(v => v.valve === name)!;
+export const generateViableMoves = (valves: Valve[]): string[][] => {
+    const initialValves = valves.filter(v => v.flow || v.room === firstRoom).map(v => v.room);
+    const shortestPaths = getShortestPaths(initialValves, valves);
 
-    const generatePaths = (currentPath: string[], remainingValves: string[]): string[][] => {
-        const nextPaths = remainingValves.map((valve, index) => ({
+    const generatePaths = (location: string, moves: string[], remainingValves: string[]): string[][] => {
+        const nextPaths = remainingValves.map(valve => ({
+            location: valve,
             // valve included in path twice to represent opening the valve.
-            path: [...currentPath, ...shortestPaths[currentPath[currentPath.length - 1]][valve], valve],
+            path: [...moves, ...shortestPaths[location][valve], valve],
             remaining: remainingValves.filter(v => v !== valve),
         })).filter(o => o.path.length <= 30)
 
         if (nextPaths.length === 0) {
-            return [currentPath];
+            return [moves];
         } else {
-            return nextPaths.flatMap(o => generatePaths(o.path, o.remaining));
+            return nextPaths.flatMap(o => generatePaths(o.location, o.path, o.remaining));
         }
     }
 
-    return generatePaths([], valvesWithFlow);//.map(p => p.map(getValve))
+    return generatePaths(firstRoom, [], initialValves);//.map(p => p.map(getValve))
 };
 
 type ShortPathLookup = { [source in string]: { [target in string]: string[] } };
-export const getShortestPaths = (valves: Valve[]) => {
+export const getShortestPaths = (targetValves: string[], valves: Valve[]) => {
 
-    const valvesWithFlow = valves.filter(v => v.flow).map(v => v.valve);
     const shortestPaths: ShortPathLookup = {};
 
-    const getValve = (name: string) => valves.find(v => v.valve === name)!;
+    const getValve = (name: string) => valves.find(v => v.room === name)!;
 
-    for (const source of valvesWithFlow) {
-        let frontier = getValve(source).connects.map(getValve);
+    for (const source of targetValves) {
+        let frontier = getValve(source).tunnels.map(getValve);
         let visited = {[source]: [] as string[]};
         const isVisited = (name: string) => visited.hasOwnProperty(name);
 
-        const shortestVisitedPath = (valve: Valve) => valve.connects
+        const shortestVisitedPath = (valve: Valve) => valve.tunnels
             .filter(isVisited)
-            .map(tunnel => [...visited[tunnel], valve.valve])
+            .map(tunnel => [...visited[tunnel], valve.room])
             .sort((a, b) => a.length - b.length)[0]!;
 
-        for (const target of valvesWithFlow) {
+        for (const target of targetValves) {
             while (!isVisited(target)) {
-                visited = frontier.map(valve => ({[valve.valve]: shortestVisitedPath(valve)}))
+                visited = frontier.map(valve => ({[valve.room]: shortestVisitedPath(valve)}))
                     .reduce((acc, visit) => ({...acc, ...visit}), visited)
-                frontier = frontier.flatMap(valve => valve.connects)
+                frontier = frontier.flatMap(valve => valve.tunnels)
                     .filter((valve) => !visited.hasOwnProperty(valve))
                     .map(getValve);
             }
@@ -76,76 +69,23 @@ export const getShortestPaths = (valves: Valve[]) => {
 }
 
 export const part1 = (input: string) => {
-    const valveInfo = parseInput(input);
-    const state: State = {
-        location: valveInfo[0],
-        time: 0,
-        openValves: [],
-        totalFlow: 0,
-        pressureReleased: 0
-    }
-    const actions: string[] = [];
-    const getValve = (valve: string) => valveInfo.find(value => value.valve === valve)!;
+    const valves = parseInput(input);
+    const viableMoves = generateViableMoves(valves);
 
-    const printAction = (action: string) => actions.push([
-        `== Minute ${state.time} ==`,
-        `${['No valves', 'Valve ', 'Valves '][Math.min(2, state.openValves.length)]}${state.openValves.map(v => v.valve).join(', ')} are open${state.totalFlow ? `, releasing ${state.totalFlow} pressure.` : '.'}`,
-        action === 'none' ? null : `You ${action} valve ${state.location.valve}.`
-].filter(s => !!s).join('\n'));
-
-    const shortestPath = (source: string, target: string): string[] => {
-        let frontier = getValve(source).connects.map(getValve);
-        let visited = {[source]: [] as string[]};
-        const isVisited = (name: string) => visited.hasOwnProperty(name);
-
-        const shortestVisitedPath = (valve: Valve) => valve.connects
-            .filter(isVisited)
-            .map(tunnel => [...visited[tunnel], valve.valve])
-            .sort((a, b) => a.length - b.length)[0]!;
-
-        while (!isVisited(target)) {
-            visited = frontier.map(valve => ({[valve.valve]: shortestVisitedPath(valve)}))
-                .reduce((acc, visit) => ({...acc, ...visit}), visited)
-            frontier = frontier.flatMap(valve => valve.connects)
-                .filter((valve) => !visited.hasOwnProperty(valve))
-                .map(getValve);
+    return viableMoves.map(moves => {
+        let path = [firstRoom, ...moves];
+        let flowRate = 0;
+        let totalPressureReleased = 0;
+        for (let time = 1; time < 31; time++) {
+            totalPressureReleased += flowRate;
+            if (time < path.length && path[time - 1] === path[time]) {
+                flowRate += valves.find(v => v.room === path[time])!.flow;
+            }
         }
-        return visited[target]!;
-    }
-
-    while (state.time < 30) {
-        state.pressureReleased += state.totalFlow;
-        state.time++;
-
-        const next = valveInfo.filter(v => v.flow > 0 && !state.openValves.includes(v))
-            .map(v => [v, shortestPath(state.location.valve, v.valve)] as const)
-            .map(([v, sp]) => [v, sp, v.flow * (30 - state.time - sp.length)] as const)
-            .sort(([, , a], [, , b]) => a - b)
-            .slice(-1)
-            .map(([_, sp]) => sp[0] ?? state.location.valve)
-            .map(getValve)
-            .pop();
-
-        if (!next) {
-            printAction('none');
-            continue;
-        }
-
-        if (state.location === next) {
-            state.openValves.push(next);
-            state.totalFlow += next.flow;
-            printAction('open');
-        } else {
-            state.location = next
-            printAction('move to');
-        }
-
-    }
-
-    return [...actions, `Total Pressure Released ${state.pressureReleased}`].join('\n\n');
-
+        return totalPressureReleased;
+    })
+        .reduce((a, b) => Math.max(a, b))
 }
-
 export const part2 = (input: string) => {
     return parseInput(input);
 }
