@@ -51,7 +51,11 @@ export const generateViableMoves = (valves: Valve[], maxMoves = 30): string[][] 
     const initialValves = valves.filter(v => v.flow || v.room === firstRoom).map(v => v.room);
     const shortestPaths = getShortestPaths(initialValves, valves);
 
-    const generatePaths = ({location, moves, remaining}: {location: string, moves: string[], remaining: string[]}): string[][] => {
+    const generatePaths = ({
+                               location,
+                               moves,
+                               remaining
+                           }: { location: string, moves: string[], remaining: string[] }): string[][] => {
         const nextPaths = remaining.map(valve => ({
             location: valve,
             // valve included in moves twice to represent opening the valve.
@@ -66,66 +70,19 @@ export const generateViableMoves = (valves: Valve[], maxMoves = 30): string[][] 
         }
     }
 
-    return generatePaths({location: firstRoom, moves: [], remaining: initialValves} );
+    return generatePaths({location: firstRoom, moves: [], remaining: initialValves});
 };
-
-export const generateViableMovesForTwo = (valves: Valve[], maxMoves = 26): string[][] => {
-    const initialValves = valves.filter(v => v.flow || v.room === firstRoom).map(v => v.room);
-    const shortestPaths = getShortestPaths(initialValves, valves);
-
-    const generatePaths = ({location, moves, remaining}: {location: string, moves: string[], remaining: string[]}): string[][] => {
-        const nextPaths = remaining.map(valve => ({
-            location: valve,
-            // valve included in moves twice to represent opening the valve.
-            moves: [...moves, ...shortestPaths[location][valve], valve],
-            remaining: remaining.filter(v => v !== valve),
-        })).filter(({moves}) => moves.length <= maxMoves)
-
-        return [moves, ...nextPaths.flatMap(generatePaths)];
-    }
-
-    return generatePaths({location: firstRoom, moves: [], remaining: initialValves} );
-};
-
-export const generateViableMovesForTwoWithoutExternalFilter = function* (valves: Valve[], maxMoves = 26): IterableIterator<string[][]> {
-    const initialValves = valves.filter(v => v.flow || v.room === firstRoom).map(v => v.room);
-    const shortestPaths = getShortestPaths(initialValves, valves);
-
-    const updateForPlayer: <T>(player: number, property: T[], update: (t: T) => T) => T[] = (player, property, update) => {
-        const updated = [...property];
-        updated[player] = update(updated[player])
-        return updated;
-    }
-    const generatePaths = function* ({ location, moves, remaining}: {location: string[], moves:string[][], remaining: string[]}): IterableIterator<string[][]> {
-        const nextPaths = [0, 1].flatMap(player => remaining.map(valve => ({
-            location: updateForPlayer(player, location, () => valve),
-            // valve included in moves twice to represent opening the valve.
-            moves: updateForPlayer(player, moves, playerMoves => [...playerMoves, ...shortestPaths[location[player]][valve], valve]),
-            remaining: remaining.filter(v => v !== valve),
-        })).filter(({moves}) => moves.some(move => move.length <= maxMoves)));
-
-        if (nextPaths.length === 0) {
-            yield moves;
-        } else {
-            for (const nextPath of nextPaths) {
-                yield* generatePaths(nextPath);
-            }
-        }
-    }
-
-    yield* generatePaths({location: [firstRoom, firstRoom], moves: [[], []], remaining: initialValves} );
-};
-
 
 export const part1 = (input: string) => {
     const valves = parseInput(input);
-    const viableMoves = generateViableMoves(valves, 26);
+    const maxMoves = 30;
+    const viableMoves = generateViableMoves(valves, maxMoves);
 
     return viableMoves.map(moves => {
         let path = [firstRoom, ...moves];
         let flowRate = 0;
         let totalPressureReleased = 0;
-        for (let time = 1; time < 27; time++) {
+        for (let time = 1; time < maxMoves + 1; time++) {
             totalPressureReleased += flowRate;
             if (time < path.length && path[time - 1] === path[time]) {
                 flowRate += valves.find(v => v.room === path[time])!.flow;
@@ -133,51 +90,65 @@ export const part1 = (input: string) => {
         }
         return totalPressureReleased;
     })
-    .reduce((a, b) => Math.max(a, b));
+        .reduce((a, b) => Math.max(a, b));
 
 }
-export const part2 = (input: string) => {
+export const part2 = (input: string): number => {
     const valves = parseInput(input);
-    const viableMoves = generateViableMovesForTwoWithoutExternalFilter(valves, 26);
+    const maxMoves = 26, part1TotalFlow = part1(input);
 
-    let maxPressure = 0;
-    const logResolution = 5;
-    const maxAttemptsInResolution = Math.pow(10, logResolution);
-    let attemptsInResolution = 0;
-    let attempts = 0;
+    const closedValves = valves.filter(v => v.flow).map(v => v.room);
+    const shortestPaths = getShortestPaths([firstRoom, ...closedValves], valves);
 
-    for (const [movesA, movesB] of viableMoves) {
-        let paths = [
-            [firstRoom, ...movesA],
-            [firstRoom, ...movesB]
-        ];
+    type PathState = {
+        location: string,
+        time: number
+        flow: number,
+        totalPressureReleased: number,
+        closedValves: string[]
+    }
+    const generatePaths = function* ({location, time, flow, totalPressureReleased, closedValves}: PathState): IterableIterator<{totalPressure: number, closedValves: string[]}> {
 
-        let flowRate = 0;
-        let totalPressureReleased = 0;
-        let closedValves: { [key in string]: number } = valves.reduce((acc, valve) => ({...acc, ...{[valve.room]: valve.flow}}), {});
+        const closedValvesWithinDistance = closedValves
+            .map(valve => [valve, shortestPaths[location][valve].length + 1] as const)
+            .filter(([_,elapsedTime]) => elapsedTime < maxMoves - time)
 
-        for (let time = 1; time < 27; time++) {
-            totalPressureReleased += flowRate;
-            [0, 1].forEach(player => {
-                const path = paths[player];
-                const location = path[time]
-                if (closedValves.hasOwnProperty(location) && time < path.length && path[time - 1] === location) {
-                    flowRate += closedValves[location];
-                    delete closedValves[location];
-                }
-            })
-        }
+        //if (closedValvesWithinDistance.length === 0 || totalPressureReleased > part1TotalFlow / 3 ) {
+            yield { totalPressure: (maxMoves - time) * flow + totalPressureReleased, closedValves };
+        //}
 
-        attemptsInResolution++;
-        maxPressure = Math.max(maxPressure, totalPressureReleased);
-
-        if (attemptsInResolution % maxAttemptsInResolution === 0) {
-            attemptsInResolution = 0;
-            attempts++;
-            console.log(`Attempt ${attempts}x10^${logResolution}: ${maxPressure}`);
+        for (const [valve, elapsedTime]  of closedValvesWithinDistance) {
+            // travel to the valve and turn it on
+            yield* generatePaths({
+                location: valve,
+                time: time + elapsedTime,
+                totalPressureReleased: totalPressureReleased + elapsedTime * flow,
+                flow: flow + valves.find( v => v.room === valve)!.flow,
+                closedValves: closedValves.filter(v => v !== valve)
+            });
         }
     }
 
-    return maxPressure;
+    let maxTotalPressure = 0;
 
-}
+    for (const pathA of generatePaths({
+        location: firstRoom,
+        time: 0,
+        flow: 0,
+        totalPressureReleased: 0,
+        closedValves
+    })) {
+        for (const pathB of generatePaths({
+            location: firstRoom,
+            time: 0,
+            flow: 0,
+            totalPressureReleased: 0,
+            closedValves: pathA.closedValves
+        })) {
+            maxTotalPressure = Math.max(maxTotalPressure, pathA.totalPressure + pathB.totalPressure);
+        }
+
+    }
+
+    return  maxTotalPressure;
+};
