@@ -105,17 +105,19 @@ export const part2 = (input: string): number => {
         time: number
         flow: number,
         totalPressureReleased: number,
+        openedValves: string[],
         closedValves: string[]
     }
-    const generatePaths = function* ({location, time, flow, totalPressureReleased, closedValves}: PathState): IterableIterator<{totalPressure: number, closedValves: string[]}> {
+    const generatePaths = function* ({location, time, flow, totalPressureReleased, openedValves, closedValves}: PathState): IterableIterator<Pick<PathState, 'totalPressureReleased' | 'closedValves' | 'openedValves'>> {
 
         const closedValvesWithinDistance = closedValves
             .map(valve => [valve, shortestPaths[location][valve].length + 1] as const)
             .filter(([_,elapsedTime]) => elapsedTime < maxMoves - time)
 
-        //if (closedValvesWithinDistance.length === 0 || totalPressureReleased > part1TotalFlow / 3 ) {
-            yield { totalPressure: (maxMoves - time) * flow + totalPressureReleased, closedValves };
-        //}
+        const pressureReleasedUntilTimeEnds = (maxMoves - time) * flow + totalPressureReleased;
+        if (closedValvesWithinDistance.length === 0 || pressureReleasedUntilTimeEnds > part1TotalFlow / 2 ) {
+            yield { totalPressureReleased: pressureReleasedUntilTimeEnds, closedValves, openedValves };
+       }
 
         for (const [valve, elapsedTime]  of closedValvesWithinDistance) {
             // travel to the valve and turn it on
@@ -124,6 +126,7 @@ export const part2 = (input: string): number => {
                 time: time + elapsedTime,
                 totalPressureReleased: totalPressureReleased + elapsedTime * flow,
                 flow: flow + valves.find( v => v.room === valve)!.flow,
+                openedValves: [...openedValves, valve],
                 closedValves: closedValves.filter(v => v !== valve)
             });
         }
@@ -136,6 +139,7 @@ export const part2 = (input: string): number => {
         time: 0,
         flow: 0,
         totalPressureReleased: 0,
+        openedValves: [],
         closedValves
     })) {
         for (const pathB of generatePaths({
@@ -143,9 +147,10 @@ export const part2 = (input: string): number => {
             time: 0,
             flow: 0,
             totalPressureReleased: 0,
+            openedValves: [],
             closedValves: pathA.closedValves
         })) {
-            maxTotalPressure = Math.max(maxTotalPressure, pathA.totalPressure + pathB.totalPressure);
+            maxTotalPressure = Math.max(maxTotalPressure, pathA.totalPressureReleased + pathB.totalPressureReleased);
         }
 
     }
