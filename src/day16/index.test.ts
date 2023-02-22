@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs'
-import {part1, part2} from "./index";
+import {bothParts, part1, part2} from "./index";
 
 const DAY = 16;
 
@@ -21,5 +21,13 @@ describe(`Day ${DAY}`, function () {
 
     it('part 2 answer is correct', () => {
         expect(part2(sampleInput)).toEqual(2811);
+    });
+
+    it('parts 1 and 2 are correct against example', () => {
+        expect(bothParts(exampleInput)).toEqual([1651, 1707]);
+    });
+
+    it('parts 1 and 2 are correct against sample', () => {
+        expect(bothParts(sampleInput)).toEqual([2265, 2811]);
     });
 });
