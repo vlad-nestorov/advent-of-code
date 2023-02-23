@@ -1,6 +1,10 @@
 import {readFileSync} from "node:fs";
-import { part1, part2 } from "./day16";
+import {part2, bothParts} from "./day16";
+
+let memProfile = require('memoizee/profile')
 
 console.log(
-    part2(readFileSync('src/day16/sample_input.txt', 'utf-8'))
+    bothParts(readFileSync('src/day16/sample_input.txt', 'utf-8'))
 );
+
+console.log(memProfile.log());

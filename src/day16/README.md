@@ -68,3 +68,20 @@ Generate all possible paths for A
 For each possible path of A
 1. Remove valves opened by A from remaining valves
 2. Use Part 1.3 solution to find max yield for 26 moves
+
+### 4. Simpler version of 3
+Turns out that instead of trying to generate all paths for both independently, it's much more efficient to calculate the 
+max yield of each next possible path for A, and the max yield if A stops there and B visits the remaining nodes. 
+
+This also has the benefit of not keeping as much state. 
+
+Based on this answer:
+https://www.reddit.com/r/adventofcode/comments/zn6k1l/comment/j0fti6c/?utm_source=share&utm_medium=web2x&context=3
+
+For the sample, attempt 3 resulted in 46975480 iterations of the `generatePaths` function, 
+while the `search` approach in attempt 3 only had 2269505, AND was easier to memoize
+
+Memoize statistics:
+
+Init    Cache  %Cache  Source location
+2269505  4304291   65.48  (all)
