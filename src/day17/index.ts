@@ -13,7 +13,7 @@ const shapes = [
     [
         [0, 0, 1],
         [0, 0, 1],
-        [0, 1, 1]
+        [1, 1, 1]
     ],
     [
         [1],
@@ -25,7 +25,7 @@ const shapes = [
         [1, 1],
         [1, 1],
     ],
-];
+].map(s => s.reverse());
 
 export const part1 = (input: string) => {
     const playfield = math.zeros(7, 7) as math.Matrix;
@@ -40,7 +40,7 @@ export const part1 = (input: string) => {
         top += shape.length;
     }
 
-    console.table(playfield.toArray());
+    console.table(playfield.map(a => a ? '#' : '.').toArray().reverse());
     //return parseInput(input);
 }
 
