@@ -28,15 +28,23 @@ const shapes = [
 ].map(s => s.reverse());
 
 export const part1 = (input: string) => {
-    const playfield = math.zeros(7, 7) as math.Matrix;
+    const playfield = math.zeros(1000, 7) as math.Matrix;
 
     let top = 0;
-    let origin = () => [2, top + 3];
 
     for (let i = 0; i < 20; i++) {
         const shape = shapes[i % 5];
-        let pos = origin();
-        playfield.subset(math.index(math.range(pos[1], pos[1] + shape.length), math.range(pos[0], pos[0] + shape[0].length)), shape)
+        top += 3;
+        let pos = () => {
+            let [y, x] = [top, 2];
+            return math.index(math.range(y, y + shape.length), math.range(x, x + shape[0].length))
+        }
+
+        while (top >= 0 && math.max(math.dot(playfield.subset(pos()), shape)) === 0) {
+            top--;
+        }
+        top++;
+        playfield.subset(pos(), shape)
         top += shape.length;
     }
 
