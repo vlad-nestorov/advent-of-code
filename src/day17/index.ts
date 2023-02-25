@@ -28,23 +28,31 @@ const shapes = [
 ].map(s => s.reverse());
 
 export const part1 = (input: string) => {
+    const winds = parseInput(input);
     const playfield = math.zeros(1000, 7) as math.Matrix;
 
     let top = 0;
+    let windIndex = 0
 
     for (let i = 0; i < 20; i++) {
         const shape = shapes[i % 5];
+        let left = 2;
         top += 3;
-        let pos = () => {
-            let [y, x] = [top, 2];
+        let pos = (y:number, x:number) => {
             return math.index(math.range(y, y + shape.length), math.range(x, x + shape[0].length))
         }
+        let collision = (index: math.Index) => math.max(math.dotMultiply(playfield.subset(index), shape));
 
-        while (top >= 0 && math.max(math.dot(playfield.subset(pos()), shape)) === 0) {
+        while (top >= 0 &&  collision(pos(top, left)) === 0) {
+            const nextLeft = left + winds[windIndex % winds.length];
+            windIndex++;
+            if (nextLeft >= 0 && nextLeft < 7 - shape[0].length && !collision(pos(top, nextLeft)) ) {
+                left = nextLeft;
+            }
             top--;
         }
         top++;
-        playfield.subset(pos(), shape)
+        playfield.subset(pos(top, left), shape)
         top += shape.length;
     }
 
