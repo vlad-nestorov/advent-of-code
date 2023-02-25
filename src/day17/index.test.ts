@@ -6,7 +6,7 @@ describe(`Day 17`, function () {
     const exampleInput = readFileSync(`src/day17/example_input.txt`, 'utf-8');
 
     it('part 1 answer is correct against example', () => {
-        expect(part1(exampleInput)).toEqual('');
+        expect(part1(exampleInput)).toEqual(3068);
     });
 
     it('part 1 answer is correct', () => {

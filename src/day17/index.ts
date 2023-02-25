@@ -1,4 +1,5 @@
 import * as math from 'mathjs'
+import {resetScreen} from "../display";
 export const parseInput = (input: string) => input.split('').map(c => c === '>' ? 1 :  -1);
 
 const shapes = [
@@ -29,35 +30,48 @@ const shapes = [
 
 export const part1 = (input: string) => {
     const winds = parseInput(input);
-    const playfield = math.zeros(1000, 7) as math.Matrix;
+    const playfield = math.zeros(2022*4, 7) as math.Matrix;
 
-    let top = 0;
+    let maxTop = 0;
     let windIndex = 0
 
-    for (let i = 0; i < 20; i++) {
-        const shape = shapes[i % 5];
+    const printPlayfield = () => console.log(
+        (playfield.map(a => a ? `${a}` : '.').toArray() as unknown as string[][])
+            .reverse()
+            .slice(-maxTop)
+            .map(row => row.join(''))
+            .join('\n'));
+
+    for (let i = 0; i < 2022; i++) {
+        const shapeType = i % shapes.length;
+        const shape = shapes[shapeType];
         let left = 2;
-        top += 3;
+        let top = maxTop + 3;
+        //resetScreen();
         let pos = (y:number, x:number) => {
             return math.index(math.range(y, y + shape.length), math.range(x, x + shape[0].length))
         }
         let collision = (index: math.Index) => math.max(math.dotMultiply(playfield.subset(index), shape));
 
-        while (top >= 0 &&  collision(pos(top, left)) === 0) {
+        while (top >= 0 && collision(pos(top, left)) === 0) {
+            //console.log(winds[windIndex % winds.length]);
             const nextLeft = left + winds[windIndex % winds.length];
             windIndex++;
-            if (nextLeft >= 0 && nextLeft < 7 - shape[0].length && !collision(pos(top, nextLeft)) ) {
+            if (nextLeft >= 0 && nextLeft < 7 - (shape[0].length - 1) && !collision(pos(top, nextLeft)) ) {
                 left = nextLeft;
             }
             top--;
         }
         top++;
-        playfield.subset(pos(top, left), shape)
+        playfield.subset(pos(top, left), math.multiply(shape,shapeType + 1))
         top += shape.length;
+        maxTop = math.max(maxTop, top);
+        //printPlayfield();
     }
 
-    console.table(playfield.map(a => a ? '#' : '.').toArray().reverse());
-    //return parseInput(input);
+
+
+    return maxTop;
 }
 
 export const part2 = (input: string) => {
