@@ -14,14 +14,14 @@ describe('Day 3', function () {
     ]
 
     const exampleInput = exmapleCases.reduce((prev, [s, ..._]) => [...prev, s], [])
-        .join("\r\n")
+        .join("\n")
 
 
     it.each(exmapleCases)('intersect', (input, expected) => {
         expect(intersect(
-                new Set(input.slice(0, input.length / 2)),
-                new Set(input.slice(input.length / 2))
-            )).toEqual(new Set([expected]));
+            new Set(input.slice(0, input.length / 2)),
+            new Set(input.slice(input.length / 2))
+        )).toEqual(new Set([expected]));
     });
 
     it('part1 example', () => {

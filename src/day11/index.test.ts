@@ -1,5 +1,5 @@
 import {readFileSync} from 'node:fs'
-import { parseInput, part1, part2, playRoundPart1} from "./index";
+import {parseInput, part1, part2, playRoundPart1} from "./index";
 
 describe('Day 11', function () {
     const sampleInput = readFileSync('src/day11/sample_input.txt', 'utf-8');
@@ -10,7 +10,7 @@ describe('Day 11', function () {
         expect(result.length).toEqual(4);
         expect(result[0]).toMatchObject({
             inspected: 0,
-            items: [79,98],
+            items: [79, 98],
             test: 23,
             nextMonkey: [3, 2]
         })

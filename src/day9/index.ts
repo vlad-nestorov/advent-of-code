@@ -1,16 +1,21 @@
 import {add, addArray, subtractArray} from "../utils";
 
 export const parseInput = (input: string): Direction[] => {
-    return input.split("\r\n")
+    return input.split("\n")
         .map(line => line.split(" "))
         .map(([direction, count]) => {
             const steps = Number(count);
             switch (direction) {
-                case 'U': return [0, steps];
-                case 'D': return [0, -steps];
-                case 'R': return [steps, 0];
-                case 'L': return [-steps, 0];
-                default: throw 'unrecognized direction';
+                case 'U':
+                    return [0, steps];
+                case 'D':
+                    return [0, -steps];
+                case 'R':
+                    return [steps, 0];
+                case 'L':
+                    return [-steps, 0];
+                default:
+                    throw 'unrecognized direction';
             }
         });
 }
@@ -21,11 +26,10 @@ export type Direction = Position;
 export type State = { head: Position, tail: Position[], visited: Set<string> }
 
 
-
 export const moveTail = (head: Position, tail: Position): Position => {
     const difference = subtractArray(head, tail);
     const magnitude = difference.map(Math.abs);
-    const [x,y] = magnitude;
+    const [x, y] = magnitude;
     const [xDirection, yDirection] = difference.map(Math.sign);
 
     // close enough to not move.
@@ -34,15 +38,15 @@ export const moveTail = (head: Position, tail: Position): Position => {
         return tail;
     }
 
-   return subtractArray(head, [
-       x < y ? 0 : xDirection,
-       y < x ? 0 : yDirection
-   ])
+    return subtractArray(head, [
+        x < y ? 0 : xDirection,
+        y < x ? 0 : yDirection
+    ])
 }
 
 export const startingState = (tails: number): State => ({
-    head: [0,0],
-    tail: Array.from({length:tails}, () => [0,0]),
+    head: [0, 0],
+    tail: Array.from({length: tails}, () => [0, 0]),
     visited: new Set(["0,0"])
 });
 
@@ -55,7 +59,7 @@ export const moveHead = (state: State, moveInstruction: Direction) => {
         state.head = addArray(state.head, direction);
         for (let tail = 0; tail < state.tail.length; tail++) {
             const head = tail === 0 ? state.head : state.tail[tail - 1];
-            state.tail[tail] = moveTail(head , state.tail[tail])
+            state.tail[tail] = moveTail(head, state.tail[tail])
         }
         state.visited.add(state.tail[state.tail.length - 1].toString())
     }

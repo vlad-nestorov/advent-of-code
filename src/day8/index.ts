@@ -4,7 +4,7 @@ type Tree = {
 }
 
 export const parseInput = (input: string): Tree[][] => {
-    return input.split("\r\n")
+    return input.split("\n")
         .map(line => line.split('')
             .map(Number))
         .map((row, rowIndex, forest) =>
@@ -36,9 +36,9 @@ export const part2 = (input: string) => {
     return parseInput(input)
         .flat()
         .map(tree => tree.linesOfSight.map((treeLine) => {
-                const tallerTree = treeLine.findIndex((otherHeight) => otherHeight >= tree.height)
-                return tallerTree === -1 ? treeLine.length : tallerTree + 1;
-            })
+            const tallerTree = treeLine.findIndex((otherHeight) => otherHeight >= tree.height)
+            return tallerTree === -1 ? treeLine.length : tallerTree + 1;
+        })
             .reduce((previousValue, currentValue) => previousValue * currentValue, 1))
         .sort((a, b) => a - b)
         .pop();

@@ -10,7 +10,7 @@ describe('Day 5', function () {
 
     it('should parse stack successfully', () => {
         const stackInput = readFileSync('src/day5/sample_input.txt', 'utf-8')
-            .split("\r\n")
+            .split("\n")
             .slice(0, 8);
 
         expect(parseStacks(stackInput)).toEqual([

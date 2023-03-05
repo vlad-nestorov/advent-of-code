@@ -85,7 +85,7 @@ const parseFile = (line: string): File => {
 export const parseInput = (input: string) => {
     const tree = new Tree();
 
-    input.split("\r\n")
+    input.split("\n")
         .filter(line => line !== '$ ls')
         .forEach(line => {
             let [_, path] = line.split('$ cd ');

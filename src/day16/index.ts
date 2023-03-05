@@ -8,7 +8,7 @@ interface Valve {
 
 const firstRoom = 'AA';
 
-export const parseInput = (input: string) => input.split("\r\n")
+export const parseInput = (input: string) => input.split("\n")
     .map(line => line.match(/Valve (\w+) has flow rate=(\d+); tunnels? leads? to valves? (.+)/)!)
     .map(match => (<Valve>{
         room: match[1],
@@ -111,24 +111,31 @@ export const part2 = (input: string): number => {
         closedValves: string[]
     }
     let iterations = 0;
-    const generatePaths = function* ({location, time, flow, totalPressureReleased, openedValves, closedValves}: PathState): IterableIterator<Pick<PathState, 'totalPressureReleased' | 'closedValves' | 'openedValves'>> {
-        iterations ++;
+    const generatePaths = function* ({
+                                         location,
+                                         time,
+                                         flow,
+                                         totalPressureReleased,
+                                         openedValves,
+                                         closedValves
+                                     }: PathState): IterableIterator<Pick<PathState, 'totalPressureReleased' | 'closedValves' | 'openedValves'>> {
+        iterations++;
         const closedValvesWithinDistance = closedValves
             .map(valve => [valve, shortestPaths[location][valve].length + 1] as const)
-            .filter(([_,elapsedTime]) => elapsedTime < maxMoves - time)
+            .filter(([_, elapsedTime]) => elapsedTime < maxMoves - time)
 
         const pressureReleasedUntilTimeEnds = (maxMoves - time) * flow + totalPressureReleased;
-        if (closedValvesWithinDistance.length === 0 || pressureReleasedUntilTimeEnds > part1TotalFlow / 2 ) {
-            yield { totalPressureReleased: pressureReleasedUntilTimeEnds, closedValves, openedValves };
-       }
+        if (closedValvesWithinDistance.length === 0 || pressureReleasedUntilTimeEnds > part1TotalFlow / 2) {
+            yield {totalPressureReleased: pressureReleasedUntilTimeEnds, closedValves, openedValves};
+        }
 
-        for (const [valve, elapsedTime]  of closedValvesWithinDistance) {
+        for (const [valve, elapsedTime] of closedValvesWithinDistance) {
             // travel to the valve and turn it on
             yield* generatePaths({
                 location: valve,
                 time: time + elapsedTime,
                 totalPressureReleased: totalPressureReleased + elapsedTime * flow,
-                flow: flow + valves.find( v => v.room === valve)!.flow,
+                flow: flow + valves.find(v => v.room === valve)!.flow,
                 openedValves: [...openedValves, valve],
                 closedValves: closedValves.filter(v => v !== valve)
             });
@@ -159,13 +166,13 @@ export const part2 = (input: string): number => {
     }
 
     console.log(`part2 iterations ${iterations}`)
-    return  maxTotalPressure;
+    return maxTotalPressure;
 };
 
 
 export const bothParts = (input: string): number[] => {
     const valves = parseInput(input);
-    const flows = valves.reduce((acc, valve) => ({...acc, ...{[valve.room] : valve.flow}}), {} as {[key in string]: number});
+    const flows = valves.reduce((acc, valve) => ({...acc, ...{[valve.room]: valve.flow}}), {} as { [key in string]: number });
 
     const closedValves = valves.filter(v => v.flow).map(v => v.room);
     const shortestPaths = getShortestPaths([firstRoom, ...closedValves], valves);
@@ -176,15 +183,15 @@ export const bothParts = (input: string): number[] => {
     //    https://topaz.github.io/paste/#XQAAAQDfAgAAAAAAAAA0m0pnuFI8c82uPD0wiI6r5tRTRja98xwzlfwFtjHHMXROBlAd++OM5E2aWHrlz38tgjgBrDMkBDPm5k7eRTLnCaSEUZUXANmWw6a7dmZdD+qaJFp7E26PQ9Ml4fpikPmCeDnULBn3YHI/yLHbVDEdzTxQZhxa+aFb3fX8qpx50mBxYGkYIvkYoHqoND3JEEe2PE8yfBjpZNgC+Vp30p9nwCUTCSQrDlaj6RCgZyoOK4E/0QTzzMTpAvuwXfRpaEG4N87Y0Rr49K516SKwkvAatNXD/MBZ2thEgjpndUPRb/SA5eo0d/OjeyIlhgFibQYYZ4KHpAn3uPUJ9CSsdyr6/TnmqI95UsPYgMPNLWjLQmy3+35ne8bKXq3SHASY+91H7LIAFMGp5QhI53Qkvfo+WAJDHW6OTabv0QXSAvP57DAnBBAMS+R0W4H3bc4fRaVa+nfP7ifAKLKxGr1w3jHedPV2HRQ4bLOdmkB0vO9OReM6lNK7nTH1EF91P5PwmenHxXGnjjhp12efsEpBwFP/p/Vk7z/7zxwFT7c5+MBovbAHfbFNxQZtnVlrS1cGvRmx5bufXqoglHIp7DFNWyZVPp8TE5qiC8hSEyzLr/+x2pjq
     const search = memoizee(function (location: string, time: number, closedValves: string[], elephant: boolean): number {
         return closedValves.filter(v => distance(location, v) < time)
-            .map( v =>
-                flow(v) * (time  - distance(location, v) - 1) + search(v, time - distance(location, v) - 1, closedValves.filter(vv => vv !== v), elephant)
+            .map(v =>
+                flow(v) * (time - distance(location, v) - 1) + search(v, time - distance(location, v) - 1, closedValves.filter(vv => vv !== v), elephant)
             ).reduce((a, b) => Math.max(a, b),
                 elephant ? search(firstRoom, 26, closedValves, false) : 0
             );
     }, {primitive: true})
 
     return [
-       search(firstRoom, 30, closedValves, false),
-       search(firstRoom, 26, closedValves, true)
+        search(firstRoom, 30, closedValves, false),
+        search(firstRoom, 26, closedValves, true)
     ];
 };

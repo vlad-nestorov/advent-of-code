@@ -20,12 +20,12 @@ export const parseStacks = (lines: string[]) => {
 }
 
 export const part1 = (input: string) => {
-    const [stackLines, instructionLines] = input.split("\r\n\r\n");
+    const [stackLines, instructionLines] = input.split("\n\n");
     const stacks = parseStacks(
-        stackLines.split("\r\n").slice(0, -1)
+        stackLines.split("\n").slice(0, -1)
     );
 
-    instructionLines.split("\r\n")
+    instructionLines.split("\n")
         .map(parseInstructionLine)
         .forEach(([count, from, to]) => {
             for (let i = 0; i < count; i++) {
@@ -38,12 +38,12 @@ export const part1 = (input: string) => {
 };
 
 export const part2 = (input: string) => {
-    const [stackLines, instructionLines] = input.split("\r\n\r\n");
+    const [stackLines, instructionLines] = input.split("\n\n");
     const stacks = parseStacks(
-        stackLines.split("\r\n").slice(0, -1)
+        stackLines.split("\n").slice(0, -1)
     );
 
-    instructionLines.split("\r\n")
+    instructionLines.split("\n")
         .map(parseInstructionLine)
         .forEach(([count, from, to]) => {
             stacks[to - 1].push(...stacks[from - 1].splice(-count));

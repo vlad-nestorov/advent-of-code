@@ -1,9 +1,9 @@
-import {add, group, multiply, subtract} from "../utils";
+import {add, group, multiply} from "../utils";
 
 type RecursiveArray = Array<number | RecursiveArray>;
 
 export const parseInput = (input: string): Array<RecursiveArray> =>
-    input.split("\r\n")
+    input.split("\n")
         .filter(l => !!l)
         .map(l => JSON.parse(l))
 
@@ -15,7 +15,7 @@ export const comparePackets = (left: RecursiveArray, right: RecursiveArray): num
         const [a, b] = [left[i], right[i]];
 
         const innerResult = (typeof a === 'number' && typeof b === 'number') ? a - b :
-            comparePackets(box(a), box( b));
+            comparePackets(box(a), box(b));
 
         if (innerResult !== 0) {
             return innerResult;
@@ -27,10 +27,10 @@ export const comparePackets = (left: RecursiveArray, right: RecursiveArray): num
 
 
 export const part1 = (input: string) => parseInput(input)
-    .reduce<[RecursiveArray,RecursiveArray][]>(group(2), [])
+    .reduce<[RecursiveArray, RecursiveArray][]>(group(2), [])
     .map(([left, right]) => comparePackets(left, right))
-   .map((inOrder, index) => inOrder < 0 ? index + 1 : 0)
-   .reduce(add)
+    .map((inOrder, index) => inOrder < 0 ? index + 1 : 0)
+    .reduce(add)
 
 export const part2 = (input: string) => {
     const packets = parseInput(input);

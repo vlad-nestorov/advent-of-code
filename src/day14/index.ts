@@ -9,7 +9,7 @@ type Point = {
 }
 
 
-export const parseInput = (input: string): Coordinate[][] => input.split("\r\n")
+export const parseInput = (input: string): Coordinate[][] => input.split("\n")
     .map(l => l.split(" -> ").map(p => p.split(',').map(Number)));
 
 
@@ -44,10 +44,10 @@ export const part1 = (input: string) => {
 
     const playingFieldElement = (coordinate: Coordinate): Point =>
         (playingField[coordinate[1]] ?? [])[coordinate[0]]
-            ?? {
-                xy: coordinate,
-                type: 'air'
-            };
+        ?? {
+            xy: coordinate,
+            type: 'air'
+        };
 
     const normalizeCoordinate = (xy: Coordinate) => subtractArray(xy, bounds.min);
 
@@ -103,7 +103,7 @@ export const part2 = (input: string) => {
     const bounds = walls.flat(1).reduce((acc, wall) => ({
         min: applyToArray(acc.min, wall, Math.min),
         max: applyToArray(acc.max, wall, Math.max),
-    }), {min: [0,0], max: [1000,0]})
+    }), {min: [0, 0], max: [1000, 0]})
 
     bounds.max = addArray(bounds.max, [1, 3]);
 
@@ -124,7 +124,7 @@ export const part2 = (input: string) => {
 
     const normalizeCoordinate = (xy: Coordinate) => subtractArray(xy, bounds.min);
 
-    walls.push([[bounds.min[0], bounds.max[1] -1 ], [bounds.max[0], bounds.max[1] - 1]]);
+    walls.push([[bounds.min[0], bounds.max[1] - 1], [bounds.max[0], bounds.max[1] - 1]]);
 
     walls.flatMap(wall => wall
         .map(normalizeCoordinate)

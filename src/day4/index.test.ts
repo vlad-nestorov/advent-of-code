@@ -1,5 +1,5 @@
 import {containsRange, intersectsRange, part1, part2, prepInput, Range} from "./index";
-import { readFileSync } from 'node:fs'
+import {readFileSync} from 'node:fs'
 
 describe('Day 4', function () {
     it('prepInput should split ranges correctly ', function () {

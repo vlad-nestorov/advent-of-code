@@ -26,7 +26,7 @@ describe('Day 7', function () {
         })
 
 
-        it('should initialize current as root',() => {
+        it('should initialize current as root', () => {
             expect(tree['current']).toBe(tree['root']);
             expect(tree['current']?.name).toEqual('root');
         });
@@ -44,7 +44,7 @@ describe('Day 7', function () {
 
         it('should add a new file to the tree ', () => {
             const previousLength = tree['current'].children!.length;
-            tree.add({name:'Vlad', type: 'f', size: 42});
+            tree.add({name: 'Vlad', type: 'f', size: 42});
             expect(tree['current'].children?.length).toEqual(previousLength + 1);
         })
 

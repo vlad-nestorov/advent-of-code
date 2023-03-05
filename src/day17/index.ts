@@ -1,6 +1,6 @@
 import * as math from 'mathjs'
 
-export const parseInput = (input: string) => input.split('').map(c => c === '>' ? 1 :  -1);
+export const parseInput = (input: string) => input.split('').map(c => c === '>' ? 1 : -1);
 
 const shapes = [
     [
@@ -30,7 +30,7 @@ const shapes = [
 
 export const part1 = (input: string) => {
     const winds = parseInput(input);
-    const playfield = math.zeros(2022*4, 7) as math.Matrix;
+    const playfield = math.zeros(2022 * 4, 7) as math.Matrix;
 
     let maxTop = 0;
     let windIndex = 0
@@ -47,7 +47,7 @@ export const part1 = (input: string) => {
         const shape = shapes[shapeType];
         let left = 2;
         let top = maxTop + 3;
-        let pos = (y:number, x:number) => {
+        let pos = (y: number, x: number) => {
             return math.index(math.range(y, y + shape.length), math.range(x, x + shape[0].length))
         }
         let collision = (index: math.Index) => math.max(math.dotMultiply(playfield.subset(index), shape));
@@ -57,7 +57,7 @@ export const part1 = (input: string) => {
             //console.log(winds[windIndex % winds.length]);
             const nextLeft = left + winds[windIndex % winds.length];
             windIndex++;
-            if (nextLeft >= 0 && nextLeft < 7 - (shape[0].length - 1) && !collision(pos(top, nextLeft)) ) {
+            if (nextLeft >= 0 && nextLeft < 7 - (shape[0].length - 1) && !collision(pos(top, nextLeft))) {
                 left = nextLeft;
             }
             //print(math.subset(playfield, pos(top, left), math.multiply(shape, 8)))
@@ -66,14 +66,13 @@ export const part1 = (input: string) => {
         top++;
         playfield.subset(
             pos(top, left),
-            math.add(playfield.subset(pos(top, left)), math.multiply(shape,shapeType + 1))
+            math.add(playfield.subset(pos(top, left)), math.multiply(shape, shapeType + 1))
         );
         //resetScreen();
         //print(playfield)
-        top += shape.length ;
+        top += shape.length;
         maxTop = math.max(maxTop, top);
     }
-
 
 
     return maxTop;
@@ -82,7 +81,7 @@ export const part1 = (input: string) => {
 export const part2 = (input: string) => {
     const winds = parseInput(input);
     const iterations = winds.length * shapes.length;
-    const playfield = math.zeros(iterations*4, 7) as math.Matrix;
+    const playfield = math.zeros(iterations * 4, 7) as math.Matrix;
 
     let maxTop = 0;
     let windIndex = 0
@@ -99,7 +98,7 @@ export const part2 = (input: string) => {
         const shape = shapes[shapeType];
         let left = 2;
         let top = maxTop + 3;
-        let pos = (y:number, x:number) => {
+        let pos = (y: number, x: number) => {
             return math.index(math.range(y, y + shape.length), math.range(x, x + shape[0].length))
         }
         let collision = (index: math.Index) => math.max(math.dotMultiply(playfield.subset(index), shape));
@@ -107,7 +106,7 @@ export const part2 = (input: string) => {
         while (top >= 0 && collision(pos(top, left)) === 0) {
             const nextLeft = left + winds[windIndex];
             windIndex = (windIndex + 1) % winds.length;
-            if (nextLeft >= 0 && nextLeft < 7 - (shape[0].length - 1) && !collision(pos(top, nextLeft)) ) {
+            if (nextLeft >= 0 && nextLeft < 7 - (shape[0].length - 1) && !collision(pos(top, nextLeft))) {
                 left = nextLeft;
             }
             top--;
@@ -115,15 +114,14 @@ export const part2 = (input: string) => {
         top++;
         playfield.subset(
             pos(top, left),
-            math.add(playfield.subset(pos(top, left)), math.multiply(shape,shapeType + 1))
+            math.add(playfield.subset(pos(top, left)), math.multiply(shape, shapeType + 1))
         );
-        top += shape.length ;
+        top += shape.length;
         maxTop = math.max(maxTop, top);
     }
 
     let turtle = 0;
     let hare = 1;
-
 
 
     while ((['shapeType', 'windIndex'] as const).some(prop => resultSet[turtle][prop] != resultSet[hare][prop])) {
@@ -137,5 +135,5 @@ export const part2 = (input: string) => {
     const hareHeight = resultSet[hare].maxTop;
 
     return Math.floor((targetIterations - turtle) / (hare - turtle)) * (hareHeight - turtleHeight)
-        + resultSet[turtle + (targetIterations - turtle) % (hare - turtle)].maxTop ;
+        + resultSet[turtle + (targetIterations - turtle) % (hare - turtle)].maxTop;
 }
