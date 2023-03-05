@@ -1,6 +1,6 @@
 import {readFileSync} from "node:fs";
-import {part1} from "./day17";
+import {part2} from "./day17";
 
 console.log(
-    part1(readFileSync('src/day17/example_input.txt', 'utf-8'))
+    part2(readFileSync('src/day17/example_input.txt', 'utf-8'))
 );
